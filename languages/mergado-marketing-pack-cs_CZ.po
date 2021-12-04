@@ -1,0 +1,947 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Mergado marketing pack\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-04-21 12:46+0000\n"
+"PO-Revision-Date: 2020-04-21 12:47+0000\n"
+"Last-Translator: \n"
+"Language-Team: Čeština\n"
+"Language: cs_CZ\n"
+"Plural-Forms: nplurals=3; plural=( n == 1 ) ? 0 : ( n >= 2 && n <= 4 ) ? 1 : "
+"2;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.3.3; wp-5.4"
+
+#: mergado-marketing-pack.php:41
+msgid ""
+"Mergado Pack plugin requires <a href=\"/wp-admin/plugin-install.php?"
+"tab=plugin-information&plugin=woocommerce\" target=\"_top\">WooCommerce</a> "
+"plugin to be active!"
+msgstr ""
+
+#: mergado-marketing-pack.php:91
+msgid "ERROR: Invalid token"
+msgstr ""
+
+#: mergado-marketing-pack.php:99
+msgid "SUCCESS: Product feed generated"
+msgstr ""
+
+#: mergado-marketing-pack.php:107
+msgid "SUCCESS: Heureka stock feed generated"
+msgstr ""
+
+#: mergado-marketing-pack.php:110
+msgid "ERROR: Heureka stock feed note enabled."
+msgstr ""
+
+#: mergado-marketing-pack.php:116
+msgid "SUCCESS: Category feed generated"
+msgstr ""
+
+#: mergado-marketing-pack.php:124
+msgid "SUCCESS: Mergado prices imported"
+msgstr ""
+
+#: mergado-marketing-pack.php:127
+msgid "ERROR: Error importing prices. Do you have correct URL in settings?"
+msgstr ""
+
+#: mergado-marketing-pack.php:169 mergado-marketing-pack.php:222
+#: mergado-marketing-pack.php:251
+msgid "Invalid token"
+msgstr ""
+
+#: mergado-marketing-pack.php:177
+msgid "Product feed generated"
+msgstr "test"
+
+#: mergado-marketing-pack.php:179
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:107
+msgid "Product feed generating already running."
+msgstr ""
+
+#: mergado-marketing-pack.php:187
+msgid "Heureka stock feed generated"
+msgstr ""
+
+#: mergado-marketing-pack.php:189
+msgid "Heureka stock feed not enabled"
+msgstr ""
+
+#: mergado-marketing-pack.php:195
+msgid "Category feed generated"
+msgstr ""
+
+#: mergado-marketing-pack.php:203
+msgid "Mergado prices imported"
+msgstr ""
+
+#: mergado-marketing-pack.php:205
+msgid "Error importing prices. Do you have correct URL in settings?"
+msgstr ""
+
+#: mergado-marketing-pack.php:274 includes/tools/CronsClass.php:89
+msgid "Every 15 minutes"
+msgstr ""
+
+#: admin/class-mergado-marketing-pack-admin.php:115
+#: admin/class-mergado-marketing-pack-admin.php:116
+#: admin/class-mergado-marketing-pack-admin.php:116
+#: admin/partials/template-mergado-marketing-pack-header.php:27
+#: admin/partials/template-mergado-marketing-pack-header.php:33
+msgid "Mergado Pack"
+msgstr ""
+
+#: admin/class-mergado-marketing-pack-admin.php:115
+#: admin/partials/template-mergado-marketing-pack-header.php:32
+msgid "Mergado"
+msgstr ""
+
+#: admin/class-mergado-marketing-pack-admin.php:120
+#: admin/partials/template-mergado-marketing-pack-header.php:142
+#: admin/partials/template-mergado-marketing-pack-header.php:142
+msgid "Settings"
+msgstr ""
+
+#: admin/class-mergado-marketing-pack-admin.php:121
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:123
+#: admin/partials/template-mergado-marketing-pack-header.php:143
+#: admin/partials/template-mergado-marketing-pack-header.php:143
+msgid "Cron tasks"
+msgstr ""
+
+#: admin/class-mergado-marketing-pack-admin.php:122
+#: admin/partials/template-mergado-marketing-pack-display-feed.php:53
+#: admin/partials/template-mergado-marketing-pack-header.php:144
+#: admin/partials/template-mergado-marketing-pack-header.php:144
+msgid "XML feeds"
+msgstr ""
+
+#: admin/class-mergado-marketing-pack-admin.php:123
+#: admin/partials/template-mergado-marketing-pack-header.php:145
+#: admin/partials/template-mergado-marketing-pack-header.php:145
+msgid "Ad Systems"
+msgstr ""
+
+#: admin/class-mergado-marketing-pack-admin.php:124
+#: admin/partials/template-mergado-marketing-pack-display-support.php:5
+#: admin/partials/template-mergado-marketing-pack-header.php:146
+#: admin/partials/template-mergado-marketing-pack-header.php:146
+msgid "Support"
+msgstr ""
+
+#: admin/class-mergado-marketing-pack-admin.php:125
+#: admin/partials/template-mergado-marketing-pack-header.php:147
+#: admin/partials/template-mergado-marketing-pack-header.php:147
+msgid "News"
+msgstr ""
+
+#: admin/class-mergado-marketing-pack-admin.php:126
+#: admin/partials/template-mergado-marketing-pack-display-licence.php:5
+#: admin/partials/template-mergado-marketing-pack-header.php:148
+#: admin/partials/template-mergado-marketing-pack-header.php:148
+msgid "Licence"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-adsys.php:159
+msgid "Advertisment systems"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-adsys.php:161
+msgid "Setup each advertisment system."
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-adsys.php:168
+msgid "Changes were saved"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-adsys.php:171
+msgid "Changes were not saved"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:70
+msgid "Category feed was re-built."
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:77
+msgid "Heureka stock feed was re-built."
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:84
+msgid "Product feed was re-built."
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:92
+msgid "Part of the product feed was re-built."
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:100
+msgid "Files merged and new product feed created."
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:119
+msgid ""
+"Be sure to add the following cron links to your task scheduler. Task "
+"Scheduler is used to automatically run scripts, in this case to "
+"automatically regenerate XML feeds. Cron task schedulers are commonly "
+"available, for example, as part of web hosting."
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:125
+msgid "NOTE:"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:126
+msgid ""
+"- WP cron is not classical cron! Cron check is called only if someone reload "
+"your webpage."
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:127
+msgid "- All WP cron times should be inserted in GMT."
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:128
+msgid ""
+"- If the beginning of the cron is in the past, it will start automatically "
+"as soon as the cron settings are saved."
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:133
+msgid "Export tasks"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:140
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:339
+#: admin/partials/template-mergado-marketing-pack-display-feed.php:63
+msgid "Feed"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:143
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:342
+#: admin/partials/template-mergado-marketing-pack-display-feed.php:66
+msgid "Link"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:146
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:345
+msgid "Actions"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:153
+#: admin/partials/template-mergado-marketing-pack-display-feed.php:79
+#: admin/partials/template-mergado-marketing-pack-display-feed.php:83
+msgid "Product feed"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:157
+msgid "Product feed cron task"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:164
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:236
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:289
+msgid "Copy cron URL"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:168
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:171
+#: admin/partials/template-mergado-marketing-pack-display-feed.php:103
+#: admin/partials/template-mergado-marketing-pack-display-feed.php:106
+msgid "Build XML part "
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:176
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:178
+#: admin/partials/template-mergado-marketing-pack-display-feed.php:111
+#: admin/partials/template-mergado-marketing-pack-display-feed.php:113
+msgid "Merge and create XML"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:180
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:182
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:238
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:240
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:291
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:293
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:361
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:363
+#: admin/partials/template-mergado-marketing-pack-display-feed.php:115
+#: admin/partials/template-mergado-marketing-pack-display-feed.php:117
+#: admin/partials/template-mergado-marketing-pack-display-feed.php:152
+#: admin/partials/template-mergado-marketing-pack-display-feed.php:154
+#: admin/partials/template-mergado-marketing-pack-display-feed.php:189
+#: admin/partials/template-mergado-marketing-pack-display-feed.php:191
+msgid "Re-build XML"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:189
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:246
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:298
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:368
+msgid "Use wordpress cron"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:196
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:252
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:304
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:374
+msgid "First start - GMT"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:200
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:256
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:308
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:378
+msgid "Cron schedule"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:216
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:270
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:323
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:393
+msgid "Save crons settings"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:225
+#: admin/partials/template-mergado-marketing-pack-display-feed.php:130
+#: admin/partials/template-mergado-marketing-pack-display-feed.php:134
+#: admin/partials/adsys-tabs/adsys-heureka.php:126
+msgid "Heureka Stock feed"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:229
+msgid "Heureka Stock feed cron task"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:278
+#: admin/partials/template-mergado-marketing-pack-display-feed.php:166
+#: admin/partials/template-mergado-marketing-pack-display-feed.php:171
+msgid "Category feed"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:282
+msgid "Category feed cron task"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:333
+msgid "Import tasks"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:352
+msgid "Import Mergado prices"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-cron.php:356
+msgid "Import prices cron task"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-feed.php:50
+msgid ""
+"Paste the following XML links into your account at <a href=\"https:"
+"//accounts.mergado.com/login/?"
+"utm_source=mp&utm_medium=button&utm_campaign=login\" title=\"Mergado "
+"account\" target=\"_blank\">Mergado account</a>. In the Mergado App you can "
+"further modify your feeds and convert them into to hundreds of other formats."
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-feed.php:70
+msgid "Status of creating"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-feed.php:98
+#: admin/partials/template-mergado-marketing-pack-display-feed.php:100
+#: admin/partials/template-mergado-marketing-pack-display-feed.php:149
+#: admin/partials/template-mergado-marketing-pack-display-feed.php:151
+#: admin/partials/template-mergado-marketing-pack-display-feed.php:186
+#: admin/partials/template-mergado-marketing-pack-display-feed.php:188
+msgid "Copy feed URL"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-feed.php:121
+#: admin/partials/template-mergado-marketing-pack-display-feed.php:123
+#: admin/partials/template-mergado-marketing-pack-display-feed.php:157
+#: admin/partials/template-mergado-marketing-pack-display-feed.php:159
+#: admin/partials/template-mergado-marketing-pack-display-feed.php:193
+#: admin/partials/template-mergado-marketing-pack-display-feed.php:195
+msgid "Download XML"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-licence.php:7
+msgid ""
+"<strong>Using the module Mergado pack is at your own risk.</strong> The "
+"creator of module, the company Mergado technologies, LLC, is not liable for "
+"any losses or damages in any form. Installing the module into your store, "
+"you agree to these terms."
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-licence.php:11
+msgid ""
+"The module source code cannot be changed and modified otherwise than the "
+"user settings in the administration."
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-licence.php:15
+msgid ""
+"Using the module Mergado pack within Wordpress & Woocommerce is free. "
+"Supported versions of Wordpress are starting 4.5.0 above and Woocommerce 3.1 "
+"above."
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-news.php:13
+msgid "Mergado news"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-settings.php:28
+msgid "Export settings"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-settings.php:31
+msgid "Generate export in batches"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-settings.php:33
+msgid ""
+"Set how many products will be generated per export batch. Leave blank to "
+"generate the entire XML feed at once."
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-settings.php:38
+msgid "Number of products to be generated in one step"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-settings.php:41
+msgid "Insert number of products"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-settings.php:44
+msgid "Leave blank to generate the entire XML feed at once."
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-settings.php:51
+#: admin/partials/template-mergado-marketing-pack-display-settings.php:90
+#: admin/partials/adsys-tabs/adsys-etarget.php:37
+#: admin/partials/adsys-tabs/adsys-facebook.php:30
+#: admin/partials/adsys-tabs/adsys-glami.php:43
+#: admin/partials/adsys-tabs/adsys-glami.php:97
+#: admin/partials/adsys-tabs/adsys-google.php:60
+#: admin/partials/adsys-tabs/adsys-heureka.php:137
+#: admin/partials/adsys-tabs/adsys-najnakup.php:31
+#: admin/partials/adsys-tabs/adsys-pricemania.php:31
+#: admin/partials/adsys-tabs/adsys-seznam.php:63
+#: admin/partials/adsys-tabs/adsys-seznam.php:113
+msgid "Save"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-settings.php:57
+msgid "Import settings"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-settings.php:60
+msgid "Import prices from Mergado - optimization"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-settings.php:62
+msgid "Price import from Mergado XML feed"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-settings.php:67
+msgid "Prices import feed URL"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-settings.php:72
+msgid "Insert URL of import prices feed from Mergado webpage."
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-settings.php:77
+msgid "Number of products imported in one cron run"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-settings.php:80
+msgid "Insert number of steps"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-settings.php:83
+msgid ""
+"Leave blank or 0 if you don't have problem with importing product prices."
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-support.php:7
+msgid ""
+"Do not hesitate to contact us on wordpress@mergado.cz in case of any "
+"question."
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-support.php:12
+msgid "Logs"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-support.php:14
+msgid ""
+"Every action is logged into WooCommerce logs. In case of a problem, please "
+"send us the log report from the date and time the issue occurred."
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-support.php:18
+msgid ""
+"You can also delete all logs on WooCommerce logs page. These logs are only "
+"accessible by users with admin access rights."
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-support.php:21
+msgid "Include when contacting support:"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-support.php:25
+msgid "Report item"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-support.php:26
+msgid "Value"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-support.php:31
+msgid "Web URL"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-support.php:35
+msgid "Cron URL"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-support.php:39
+msgid "Feed URL"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-support.php:43
+msgid "Token"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-support.php:47
+msgid "PHP"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-support.php:51
+msgid "WP version"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-support.php:55
+msgid "WC version"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-support.php:62
+msgid "Not available"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-support.php:68
+msgid "MP version"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-support.php:75
+msgid "Show WooCommerce logs"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-display-support.php:75
+msgid "Show Woocommerce logs"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-header.php:26
+#, php-format
+msgid ""
+"https://pack.mergado.%s/?"
+"utm_source=mp&utm_medium=logo&utm_campaign=mergado_pack"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-header.php:32
+#, php-format
+msgid "https://mergado.%s/?utm_source=mp&utm_medium=logo&utm_campaign=mergado"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-header.php:36
+msgid ""
+"https://accounts.mergado.com/register/?"
+"utm_source=mp&utm_medium=button&utm_campaign=register"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-header.php:36
+msgid "New account"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-header.php:37
+msgid ""
+"https://accounts.mergado.com/login/?"
+"utm_source=mp&utm_medium=button&utm_campaign=login"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-header.php:37
+msgid "Sign In"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-header.php:42
+msgid "Connect your ecommerce to the online marketing world."
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-header.php:74
+msgid ""
+"We have noticed that you have been using Mergado Pack for some time. We hope "
+"you love it, and we would really appreciate it if you would <a href=\"https:"
+"//wordpress.org/support/plugin/mergado-marketing-pack/reviews/#new-post\">"
+"give us a 5 stars rating ★ ★ ★ ★ ★.</a>"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-header.php:89
+msgid "New update available"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-header.php:89
+msgid "Update to version "
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-header.php:134
+msgid "CONNECT YOUR ONLINE STORE TO THE E-COMMERCE WORLD"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-header.php:137
+msgid "Connect your online store to the biggest marketing channels."
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-header.php:138
+msgid ""
+"Export your feeds and turn them into hundreds of formats with Mergado App."
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-header.php:154
+msgid "NEWS"
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-header.php:160
+msgid "Error occurred during generating feed. Please contact our support."
+msgstr ""
+
+#: admin/partials/template-mergado-marketing-pack-header.php:164
+msgid "Feed generation"
+msgstr ""
+
+#: includes/tools/CronsClass.php:90
+msgid "Every hour"
+msgstr ""
+
+#: includes/tools/CronsClass.php:91
+msgid "Twice a day"
+msgstr ""
+
+#: includes/tools/CronsClass.php:92
+msgid "Daily"
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-etarget.php:4
+msgid "Etarget"
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-etarget.php:10
+#: admin/partials/adsys-tabs/adsys-facebook.php:9
+#: admin/partials/adsys-tabs/adsys-glami.php:9
+#: admin/partials/adsys-tabs/adsys-glami.php:61
+#: admin/partials/adsys-tabs/adsys-google.php:10
+#: admin/partials/adsys-tabs/adsys-najnakup.php:10
+#: admin/partials/adsys-tabs/adsys-pricemania.php:10
+#: admin/partials/adsys-tabs/adsys-seznam.php:74
+msgid "Active"
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-etarget.php:18
+msgid "ETARGET hash"
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-etarget.php:21
+#: admin/partials/adsys-tabs/adsys-etarget.php:29
+#: admin/partials/adsys-tabs/adsys-facebook.php:20
+#: admin/partials/adsys-tabs/adsys-glami.php:29
+#: admin/partials/adsys-tabs/adsys-glami.php:82
+#: admin/partials/adsys-tabs/adsys-google.php:21
+#: admin/partials/adsys-tabs/adsys-google.php:31
+#: admin/partials/adsys-tabs/adsys-google.php:50
+#: admin/partials/adsys-tabs/adsys-heureka.php:26
+#: admin/partials/adsys-tabs/adsys-heureka.php:45
+#: admin/partials/adsys-tabs/adsys-heureka.php:82
+#: admin/partials/adsys-tabs/adsys-heureka.php:101
+#: admin/partials/adsys-tabs/adsys-najnakup.php:21
+#: admin/partials/adsys-tabs/adsys-pricemania.php:21
+#: admin/partials/adsys-tabs/adsys-seznam.php:21
+#: admin/partials/adsys-tabs/adsys-seznam.php:33
+#: admin/partials/adsys-tabs/adsys-seznam.php:53
+#: admin/partials/adsys-tabs/adsys-seznam.php:94
+#: admin/partials/adsys-tabs/adsys-seznam.php:104
+msgid "Insert code here"
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-etarget.php:26
+msgid "ETARGET ID"
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-facebook.php:4
+msgid "Facebook Pixel"
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-facebook.php:17
+msgid "Facebook pixel ID"
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-facebook.php:22
+msgid ""
+"Pixel ID can be found in your Facebook Business Manager. Go to Events "
+"Manager > Add new data feed > Facebook pixel. Pixel ID is displayed below "
+"the title on the Overview page at the top left."
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-glami.php:4
+msgid "Glami piXel"
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-glami.php:13
+msgid ""
+"You can find your piXel in the Glami Administration at Glami piXel page > "
+"Implementing Glami piXel for Developers > Glami piXel Code section for YOUR "
+"ESHOP."
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-glami.php:20
+msgid "Pixel code"
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-glami.php:48
+msgid "Glami TOP"
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-glami.php:52
+msgid "Your website must have HTTPS protocol on order confirmation page"
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-glami.php:53
+msgid "You have to set your DNS before use"
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-glami.php:55
+msgid "Read more"
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-glami.php:65
+msgid ""
+"You can find your Glami TOP API key in the Glami Administration at the Glami "
+"TOP page > Implementation > Developer Implementation Guide> Javascript "
+"Integration section."
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-glami.php:72
+msgid "TOP code"
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-google.php:4
+msgid "Google Ads"
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-google.php:18
+msgid "Ads conversion code"
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-google.php:23
+msgid ""
+"Get the Conversion code in your Google Ads Account Administration > Tools & "
+"Settings > MEASUREMENT - Conversions > Add Conversion > Website. Create a "
+"new conversion, then click Install the tag yourself. The code is located in "
+"the “Global Site Tag” section and takes the form of AW-123456789."
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-google.php:28
+msgid "Ads conversion label"
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-google.php:33
+msgid ""
+"You can find the Conversion Label on the same page as the conversion code. "
+"The label is located in the “Event fragment” section of the send_to element, "
+"after the slash. For example, it has the form of /SqrGHAdS-MerfQC."
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-google.php:38
+msgid "Ads remarketing"
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-google.php:47
+msgid "Ads remarketing ID"
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-google.php:52
+msgid ""
+"Get your Remarketing ID in your Google Ads Account Administration > Tools & "
+"Settings > Audience Manager > Audience Sources > Set up Google Ads Tag. "
+"Create a new tag, and then click Install the tag yourself. The code is "
+"located in the “Global Site Tag” section and takes the form of AW-123456789."
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-heureka.php:4
+msgid "Heureka"
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-heureka.php:14
+#: admin/partials/adsys-tabs/adsys-heureka.php:70
+msgid "Enable verified by users"
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-heureka.php:23
+#: admin/partials/adsys-tabs/adsys-heureka.php:79
+msgid "Verified by users code"
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-heureka.php:28
+#: admin/partials/adsys-tabs/adsys-heureka.php:84
+msgid ""
+"You can find your store key in the Heureka account administration under "
+"Verified customers > Settings and questionnaire data > Secret Key for "
+"verified customers."
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-heureka.php:34
+#: admin/partials/adsys-tabs/adsys-heureka.php:90
+msgid "Track conversions"
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-heureka.php:42
+#: admin/partials/adsys-tabs/adsys-heureka.php:98
+msgid "Conversions code"
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-heureka.php:47
+#: admin/partials/adsys-tabs/adsys-heureka.php:103
+msgid ""
+"You can find your store conversion tracking key in the Heureka account "
+"administration under the Statistics and Reports > Conversion Tracking > "
+"Public Key for Conversion Tracking Code."
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-heureka.php:53
+msgid "Enable CZ widget"
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-heureka.php:108
+msgid "Enable SK widget"
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-najnakup.php:4
+msgid "NajNakup.sk"
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-najnakup.php:18
+msgid "NajNakup shop ID"
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-najnakup.php:23
+msgid "Your unique store ID for Najnakup.sk."
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-pricemania.php:4
+msgid "Pricemania"
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-pricemania.php:18
+msgid "Pricemania shop ID"
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-pricemania.php:23
+msgid "Your unique Store ID from Pricemania."
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-seznam.php:4
+msgid "Sklik"
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-seznam.php:10
+msgid "Sklik conversion tracking"
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-seznam.php:18
+msgid "Sklik conversion code"
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-seznam.php:25
+msgid ""
+"You can find the code in Sklik → Tools → Conversion Tracking → Conversion "
+"Detail / Create New Conversion. The code is in the generated HTML conversion "
+"code after: src = \"// c.imedia.cz/checkConversion?c=CONVERSION CODE"
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-seznam.php:30
+msgid "Sklik conversion value"
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-seznam.php:37
+msgid ""
+"Leave blank to fill the order value automatically. Total price excluding VAT "
+"and shipping is calculated."
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-seznam.php:42
+msgid "Sklik retargeting"
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-seznam.php:50
+msgid "Sklik retargeting code"
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-seznam.php:55
+msgid ""
+"The code can be found in Sklik → Tools → Retargeting → View retargeting code."
+" The code is in the generated script after: var list_retargeting_id = "
+"RETARGETING CODE"
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-seznam.php:68
+msgid "Zboží.cz"
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-seznam.php:82
+msgid "Enable standard conversion measuring"
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-seznam.php:86
+msgid ""
+"Unlike limited tracking, Standard Conversion Tracking allows you to keep "
+"track of the number and value of conversions, as well as conversion rate, "
+"cost per conversion, direct conversions, units sold, etc."
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-seznam.php:91
+msgid "Zbozi shop ID"
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-seznam.php:96
+#: admin/partials/adsys-tabs/adsys-seznam.php:106
+msgid ""
+"You can find your unique Secret Key in admin page zbozi.cz > Branches > "
+"ESHOP > Conversion Tracking > Your unique Secret Key."
+msgstr ""
+
+#: admin/partials/adsys-tabs/adsys-seznam.php:101
+msgid "Secret code"
+msgstr ""
+
+#. Name of the plugin
+msgid "Mergado marketing pack"
+msgstr ""
+
+#. Description of the plugin
+msgid ""
+"Earn more on price comparator sites. <strong>REQUIRES: Woocommerce</strong>"
+msgstr ""
+
+#. URI of the plugin
+#. Author URI of the plugin
+msgid "https://www.mergado.cz"
+msgstr ""
+
+#. Author of the plugin
+msgid "Mergado technologies, s. r. o."
+msgstr ""
