@@ -102,6 +102,8 @@ class XMLProductFeed
                     exit;
                 }
 
+				wp_schedule_single_event(time(), 'wp-cron-product-feed-hook');
+				
                 return 'stepGenerated';
             // Common generating
             } elseif ($this->isNormal($productsPerStep, $productsList)) {
