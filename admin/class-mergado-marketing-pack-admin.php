@@ -65,6 +65,12 @@ class Megrado_export extends WC_Product_CSV_Exporter {
         return $this->row_data;
     }
 
+    public function generate_product_data( $product_id ){
+        $product = \wc_get_product( $product_id );
+        $row_data = $this->generate_row_data( $product );
+        return $row_data;
+    }
+
 }
 
 class Mergado_Marketing_Pack_Admin {

@@ -174,6 +174,10 @@ class XMLProductFeed
             $productObject = wc_get_product($v['id']);
             $parentId = wc_get_product($v['id'])->get_parent_id();
 
+            if( $parentId ){
+                $vParent = XMLClass::getProduct( $parentId );
+            }
+
             $posts = $wpdb->get_results($wpdb->prepare("SELECT * FROM $wpdb->posts WHERE ID=%s", $v['id']));
             if (isset($posts[0])) {
                 $post = $posts[0];
@@ -296,7 +300,7 @@ class XMLProductFeed
             //Product parameters
             $productAttributes = $productObject->get_attributes();
 
-            if (isset($products[$parentId])) {
+            if ($parentId) {
                 $productParentObject = wc_get_product($parentId);
                 $parentParams = wc_get_product($parentId)->get_attributes();
             } else {
@@ -359,11 +363,11 @@ class XMLProductFeed
                 $item->appendChild($xml->createElement('ITEMGROUP_ID', $parentId));
 
                 $productNo = $xml->createElement('PRODUCTNO');
-                $productNo->appendChild($xml->createCDATASection(($v['sku'] != '') ? $v['sku'] : (isset($products[$parentId]['sku']) ? $products[$parentId]['sku'] : '')));
+                $productNo->appendChild($xml->createCDATASection(($v['sku'] != '') ? $v['sku'] : (isset($vParent['sku']) ? $vParent['sku'] : '')));
                 $item->appendChild($productNo);
 
-                if (isset($products[$parentId])) {
-                    $categories = $this->findCategory($products[$parentId]['category_ids']);
+                if ($parentId) {
+                    $categories = $this->findCategory($vParent['category_ids']);
                 } else {
                     $categories = '';
                 }
@@ -375,8 +379,8 @@ class XMLProductFeed
                 // Short description
                 $shortDescription = $xml->createElement('DESCRIPTION_SHORT');
 
-                if (isset($products[$parentId])) {
-                    $shortDescription->appendChild($xml->createCDATASection($products[$parentId]['short_description']));
+                if ($parentId) {
+                    $shortDescription->appendChild($xml->createCDATASection($vParent['short_description']));
                 } else {
                     $shortDescription->appendChild($xml->createCDATASection(''));
                 }
@@ -385,7 +389,7 @@ class XMLProductFeed
 
                 // Description
                 $description = $xml->createElement('DESCRIPTION');
-                $description->appendChild($xml->createCDATASection(sprintf('%s %s', isset($products[$parentId]['description']) ? $products[$parentId]['description'] : '', $v['description'])));
+                $description->appendChild($xml->createCDATASection(sprintf('%s %s', isset($vParent['description']) ? $vParent['description'] : '', $v['description'])));
 
                 $item->appendChild($description);
 
@@ -403,7 +407,7 @@ class XMLProductFeed
                     $item->appendChild($ean);
                 }
 
-                $parent = array_key_exists($parentId, $products) ? $products[$parentId] : null;
+                $parent = array_key_exists($parentId, $products) ? $vParent : null;
 
                 // Variant administration in woocomerce showing MAIN PRODUCT attributes as placeholder ..
                 // so assume that customer will fill only the one he wants to change

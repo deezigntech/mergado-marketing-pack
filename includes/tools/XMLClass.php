@@ -100,6 +100,21 @@ class XMLClass
         return $products;
     }
 
+    public static function getProduct( $product_id )
+    {
+        $exporter = new Megrado_export();
+
+        if ( $product_id ){
+            $product_row_data = $exporter->generate_product_data($product_id);
+
+            if( $product_row_data ){ 
+                return $product_row_data;
+            }
+        }
+
+        return false;
+    }
+
 
     /*******************************************************************************************************************
      * DOWNLOAD
