@@ -528,8 +528,14 @@ class XMLProductFeed
                     $item['value'] = implode(', ', $attrValue->get_options());
                 }
             } else {
-                $item['name'] = wc_attribute_taxonomy_slug($attrName);
-                $item['value'] = $attrValue;
+                $item['name'] = wc_attribute_label($attrName) . " (Variation level)";
+                $term = \get_term_by('slug', $attrValue, $attrName);
+
+                if ( $term ){
+                    $item['value'] = $term->name;
+                }else{
+                    $item['value'] = $attrValue;
+                }
             }
 
             if ($item['value'] !== '') {
@@ -554,8 +560,14 @@ class XMLProductFeed
                     }
 
                 } else {
-                    $item['name'] = wc_attribute_taxonomy_slug($attrName);
-                    $item['value'] = $attrValue;
+                    $item['name'] = wc_attribute_label($attrName);
+                    $term = \get_term_by('slug', $attrValue, $attrName);
+
+                    if ( $term ){
+                        $item['value'] = $term->name;
+                    }else{
+                        $item['value'] = $attrValue;
+                    }
                 }
 
 
