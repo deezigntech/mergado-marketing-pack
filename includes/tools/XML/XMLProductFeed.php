@@ -185,6 +185,9 @@ class XMLProductFeed
 
             $item->appendChild($xml->createElement('ITEM_ID', $v['id']));
 
+            $product_visibility = $productObject->get_catalog_visibility();
+            $item->appendChild( $xml->createElement('VISIBILITY', $product_visibility ) );
+
             $stock = $this->getStockStatus($v['stock_status']);
 
             $item->appendChild($xml->createElement('AVAILABILITY', $stock));
