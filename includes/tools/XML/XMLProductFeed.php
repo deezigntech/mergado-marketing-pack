@@ -343,7 +343,7 @@ class XMLProductFeed
 
                 $categories = $this->findCategory($v['category_ids']);
                 $category = $xml->createElement('CATEGORY');
-                $category->appendChild($xml->createCDATASection($categories));
+                $category->appendChild($xml->createCDATASection( apply_filters( 'mergado_xml_product_categories', $categories, $v['id'] ) ) );
                 $item->appendChild($category);
 
                 $shortDescription = $xml->createElement('DESCRIPTION_SHORT');
@@ -373,7 +373,7 @@ class XMLProductFeed
                 }
 
                 $category = $xml->createElement('CATEGORY');
-                $category->appendChild($xml->createCDATASection($categories));
+                $category->appendChild( $xml->createCDATASection( apply_filters( 'mergado_xml_product_categories', $categories, $vParent['id'] ) ) );
                 $item->appendChild($category);
 
                 // Short description
@@ -429,6 +429,7 @@ class XMLProductFeed
                 $item->appendChild($xml->createElement('SHIPPING_WEIGHT', sprintf('%s %s', $productObject->get_weight(), $weightUnit)));
             }
 
+            $item = apply_filters( 'mergado_xml_item', $item, $xml, ( $parentId? $vParent : $v ) );
 
             $channel->appendChild($item);
         }
