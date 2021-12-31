@@ -96,7 +96,7 @@ class GaRefundClass
     public function getStatus($statusKey)
     {
         // Default set to true
-        if ($statusKey === 'wc-refunded') {
+        if ($statusKey === 'wc-refunded' || $statusKey == 'cancelled') {
             $result = get_option(self::STATUS . $statusKey, 1);
         } else {
             $result = get_option(self::STATUS . $statusKey, 0);
