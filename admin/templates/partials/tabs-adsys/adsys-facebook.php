@@ -1,6 +1,6 @@
 <?php
-    use Mergado\Facebook\FacebookClass;
-    $facebookClass = new FacebookClass();
+    use Mergado\Facebook\FacebookService;
+    $facebookClass = new FacebookService();
 ?>
 
 <div class="card full">

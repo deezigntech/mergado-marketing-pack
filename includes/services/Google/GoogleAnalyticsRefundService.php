@@ -18,7 +18,7 @@ namespace Mergado\Google;
 
 use Mergado;
 
-class GaRefundClass
+class GoogleAnalyticsRefundService
 {
     const ACTIVE = 'ga_refund_active';
     const CODE = 'ga_refund_code';
@@ -96,7 +96,7 @@ class GaRefundClass
     public function getStatus($statusKey)
     {
         // Default set to true
-        if ($statusKey === 'wc-refunded' || $statusKey == 'cancelled') {
+        if ($statusKey === 'wc-refunded') {
             $result = get_option(self::STATUS . $statusKey, 1);
         } else {
             $result = get_option(self::STATUS . $statusKey, 0);

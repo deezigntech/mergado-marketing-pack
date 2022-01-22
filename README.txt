@@ -1,5 +1,5 @@
 === Mergado Pack ===
-Stable tag: 3.1.1
+Stable tag: 3.2.1
 Contributors: mergado
 Donate link: https://pack.mergado.com/woocommerce
 Tags: woocommerce, marketing, xml, export, feed
@@ -231,6 +231,18 @@ If you need any help with installation and the first setup of the module, contac
 We would appreciate if you let us know at [mergado@mergado.com](mailto:mergado@mergado.com)
 
 == Changelog ==
+
+= 3.2.1 =
+* FIX: Kelkoo, Glami Pixel - sanitize undefined indexes
+* FIX: Product feed - Add variations to product names with more than 2 variants
+* FIX: Various text fixes
+
+= 3.2.0 =
+* GDPR consent integration - CookieYes | GDPR Cookie Consent & Compliance Notice (CCPA Ready)
+* Biano pixel - added customer_email to purchased event
+
+= 3.1.2 =
+* FIX: WC_Logger called incorrectly
 
 = 3.1.1 =
 * Heureka widget - removed options for mobile version

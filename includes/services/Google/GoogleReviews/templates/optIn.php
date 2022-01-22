@@ -1,5 +1,17 @@
+<?php use Mergado\Tools\CookieClass; ?>
+
 <!-- BEGIN GCR Opt-in Module Code -->
-<script src="https://apis.google.com/js/platform.js?onload=renderOptIn" async defer></script>
+
+<?php if(CookieClass::functionalEnabled()): ?>
+    <script src="https://apis.google.com/js/platform.js?onload=renderOptIn" async defer></script>
+<?php else: ?>
+    <script>
+      window.mmp.cookies.sections.functional.functions.googleReviewsOptIn = function () {
+        $('body').append('<script src="https://apis.google.com/js/platform.js?onload=renderOptIn" async defer><\/script>');
+      };
+    </script>
+<?php endif; ?>
+
 
 <script>
   window.renderOptIn = function () {

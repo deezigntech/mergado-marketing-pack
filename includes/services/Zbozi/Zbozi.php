@@ -266,7 +266,7 @@ class Zbozi
         $url = $this::BASE_URL;
         $url = str_replace("%%SHOP_ID%%", $this->SHOP_ID, $url);
 
-        if (ZboziClass::ZBOZI_SANDBOX) {
+        if (ZboziService::ZBOZI_SANDBOX) {
             $url = str_replace("%%DOMAIN%%", "sandbox.zbozi.cz", $url);
         } else {
             $url = str_replace("%%DOMAIN%%", "www.zbozi.cz", $url);
@@ -305,7 +305,7 @@ class Zbozi
         $confirmed = get_post_meta($orderId, 'zbozi-verify-checkbox', true);
 
         if (empty($confirmed)) {
-            $ZboziClass = new ZboziClass();
+            $ZboziClass = new ZboziService();
 
             $id = $ZboziClass->getId();
             $secret = $ZboziClass->getKey();

@@ -17,10 +17,11 @@
 namespace Mergado\Heureka;
 
 use Exception;
+use Mergado\Tools\CookieClass;
 use Mergado\Tools\Languages;
 use Mergado\Tools\Settings;
 
-class HeurekaClass
+class HeurekaService
 {
     const HEUREKA_URL = 'https://www.heureka.cz/direct/dotaznik/objednavka.php';
     const HEUREKA_URL_SK = 'https://www.heureka.sk/direct/dotaznik/objednavka.php';
@@ -191,11 +192,11 @@ class HeurekaClass
         $currency = $order->get_currency();
 
         if ($currency == 'CZK') {
-            $url = HeurekaClass::HEUREKA_URL;
+            $url = HeurekaService::HEUREKA_URL;
         }
 
         if ($currency == 'EUR') {
-            $url = HeurekaClass::HEUREKA_URL_SK;
+            $url = HeurekaService::HEUREKA_URL_SK;
         }
 
         $url .= '?id=' . $apiKey;
@@ -233,30 +234,59 @@ class HeurekaClass
 
     private static function widgetCode($widgetId, $langLower, $marginTop, $position, $minWidth, $showMobile)
     {
-
-        echo "<script type='text/javascript'>
-//            var heureka_widget_enable_mobile = " . ($showMobile === '' ? 0 : $showMobile) . ";
-//            var heureka_widget_hide_width = " . ($minWidth === '' ? 0 : $minWidth) . ";
-            var heureka_widget_active = true;
-            
-            var widgetId = '" . $widgetId . "';
-            var marginTop = '" . ($marginTop === '' ? 60 : $marginTop) . "';
-            var position = '" . ($position === '' ? 21 : $position) . "';
-            //<![CDATA[
-            var _hwq = _hwq || [];
-            _hwq.push(['setKey', widgetId]);
-            _hwq.push(['setTopPos', marginTop]);
-            _hwq.push(['showWidget', position]);
-            (function () {
-                var ho = document.createElement('script');
-                ho.type = 'text/javascript';
-                ho.async = true;
-                ho.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.heureka." . $langLower . "/direct/i/gjs.php?n=wdgt&sak=' + widgetId;
-                var s = document.getElementsByTagName('script')[0];
-                s.parentNode.insertBefore(ho, s);
-            })();
-            //]]>
-        </script>";
+		if (CookieClass::functionalEnabled()):
+		    echo "<script type='text/javascript'>
+	    //            var heureka_widget_enable_mobile = " . ($showMobile === '' ? 0 : $showMobile) . ";
+	    //            var heureka_widget_hide_width = " . ($minWidth === '' ? 0 : $minWidth) . ";
+	                var heureka_widget_active = true;
+	                
+	                var widgetId = '" . $widgetId . "';
+	                var marginTop = '" . ($marginTop === '' ? 60 : $marginTop) . "';
+	                var position = '" . ($position === '' ? 21 : $position) . "';
+	                
+	                //<![CDATA[
+	                var _hwq = _hwq || [];
+	                _hwq.push(['setKey', widgetId]);
+	                _hwq.push(['setTopPos', marginTop]);
+	                _hwq.push(['showWidget', position]);
+	                (function () {
+	                    var ho = document.createElement('script');
+	                    ho.type = 'text/javascript';
+	                    ho.async = true;
+	                    ho.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.heureka." . $langLower . "/direct/i/gjs.php?n=wdgt&sak=' + widgetId;
+	                    var s = document.getElementsByTagName('script')[0];
+	                    s.parentNode.insertBefore(ho, s);
+	                })();
+	                //]]>
+	        </script>";
+		else:
+	        echo "<script type='text/javascript'>
+	            window.mmp.cookies.sections.functional.functions.herukaWidget = function () {
+	    //            var heureka_widget_enable_mobile = " . ($showMobile === '' ? 0 : $showMobile) . ";
+	    //            var heureka_widget_hide_width = " . ($minWidth === '' ? 0 : $minWidth) . ";
+	                var heureka_widget_active = true;
+	                
+	                var widgetId = '" . $widgetId . "';
+	                var marginTop = '" . ($marginTop === '' ? 60 : $marginTop) . "';
+	                var position = '" . ($position === '' ? 21 : $position) . "';
+	                
+	                //<![CDATA[
+	                var _hwq = _hwq || [];
+	                _hwq.push(['setKey', widgetId]);
+	                _hwq.push(['setTopPos', marginTop]);
+	                _hwq.push(['showWidget', position]);
+	                (function () {
+	                    var ho = document.createElement('script');
+	                    ho.type = 'text/javascript';
+	                    ho.async = true;
+	                    ho.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.heureka." . $langLower . "/direct/i/gjs.php?n=wdgt&sak=' + widgetId;
+	                    var s = document.getElementsByTagName('script')[0];
+	                    s.parentNode.insertBefore(ho, s);
+	                })();
+	                //]]>
+	            }
+	        </script>";
+		endif;
     }
 
     private static function  orderConfirmationCode($orderId, $trackCode, $heurekaProducts, $iso_code)

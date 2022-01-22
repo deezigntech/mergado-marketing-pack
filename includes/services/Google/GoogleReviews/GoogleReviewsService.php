@@ -5,7 +5,7 @@ namespace Mergado\Google;
 use DateTime;
 use Mergado;
 
-class GoogleReviewsClass
+class GoogleReviewsService
 {
     //Both services
     const MERCHANT_ID = 'gr_merchant_id';

@@ -1,5 +1,6 @@
 <?php
 
+use Mergado\Tools\CookieClass;
 use Mergado\Tools\Languages;
 
 /**
@@ -96,9 +97,14 @@ class Mergado_Marketing_Pack_Public {
          */
 
         $lang = Languages::getLang();
-        $glamiPixelClass = new Mergado\Glami\GlamiPixelClass();
+        $glamiPixelClass = new Mergado\Glami\GlamiPixelService();
+
         if($glamiPixelClass->isActive($lang)) {
             wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/glami.js', array('jquery'), $this->version, false);
+        }
+
+        if (CookieClass::isCookieBlockingEnabled()) {
+	            wp_enqueue_script($this->plugin_name . '-cookies', plugin_dir_url(__FILE__) . 'js/cookies.js', array('jquery'), $this->version, true);
         }
 
 //        wp_enqueue_script($this->plugin_name . '_heureka', plugin_dir_url(__FILE__) . 'js/heureka.js', array('jquery'), $this->version, false);

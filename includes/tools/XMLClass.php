@@ -100,21 +100,6 @@ class XMLClass
         return $products;
     }
 
-    public static function getProduct( $product_id )
-    {
-        $exporter = new Megrado_export();
-
-        if ( $product_id ){
-            $product_row_data = $exporter->generate_product_data($product_id);
-
-            if( $product_row_data ){ 
-                return $product_row_data;
-            }
-        }
-
-        return false;
-    }
-
 
     /*******************************************************************************************************************
      * DOWNLOAD
@@ -162,15 +147,9 @@ class XMLClass
                 } else {
                     $item['value'] = implode(', ', $attrValue->get_options());
                 }
-            } else { 
-                $item['name'] = wc_attribute_label($attrName) . " (Variation level)";
-                $term = \get_term_by('slug', $attrValue, $attrName);
-
-                if ( $term ){
-                    $item['value'] = $term->name;
-                }else{
-                    $item['value'] = $attrValue;
-                }
+            } else {
+                $item['name'] = wc_attribute_taxonomy_slug($attrName);
+                $item['value'] = $attrValue;
             }
 
             if($item['value'] !== '') {
@@ -185,8 +164,8 @@ class XMLClass
                 $item = [];
 
                 if ($attrValue instanceof \WC_Product_Attribute) {
-                    $item['name'] = wc_attribute_label($attrValue->get_name()); //Case //sensitive
-                    //$item['name'] = wc_attribute_taxonomy_slug($attrName); //Lowercase // cant get simple products
+//                    $item['name'] = wc_attribute_label($attrValue->get_name()); //Case //sensitive
+                    $item['name'] = wc_attribute_taxonomy_slug($attrName); //Lowercase // cant get simple products
 
                     if(substr( $attrValue->get_name(), 0, 3 ) === "pa_") {
                         $item['value'] = $parent->get_attribute( $attrValue->get_name() );
@@ -194,15 +173,9 @@ class XMLClass
                         $item['value'] = implode(', ', $attrValue->get_options());
                     }
 
-                } else { 
-                    $item['name'] = wc_attribute_label($attrName);
-                    $term = \get_term_by('slug', $attrValue, $attrName);
-    
-                    if ( $term ){
-                        $item['value'] = $term->name;
-                    }else{
-                        $item['value'] = $attrValue;
-                    }
+                } else {
+                    $item['name'] = wc_attribute_taxonomy_slug($attrName);
+                    $item['value'] = $attrValue;
                 }
 
 

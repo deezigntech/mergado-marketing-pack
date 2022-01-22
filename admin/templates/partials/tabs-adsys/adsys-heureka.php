@@ -366,7 +366,7 @@ Or you can find the key of your widget in the Heureka account administration und
 
                 <?php
                     $enUsValue = stripslashes(get_option('heureka-verify-opt-out-text-en_US'));
-                    $defaultValue = Mergado\Heureka\HeurekaClass::DEFAULT_OPT;
+                    $defaultValue = Mergado\Heureka\HeurekaService::DEFAULT_OPT;
 
                     if (trim($enUsValue) == '') {
                         $enUsValue = $defaultValue;

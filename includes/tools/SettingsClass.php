@@ -16,15 +16,18 @@
 
 namespace Mergado\Tools;
 
-use Mergado\Arukereso\ArukeresoClass;
-use Mergado\Facebook\FacebookClass;
-use Mergado\Glami\GlamiPixelClass;
-use Mergado\Glami\GlamiTopClass;
-use Mergado\Google\GaRefundClass;
-use Mergado\Google\GoogleAdsClass;
-use Mergado\Google\GoogleReviewsClass;
-use Mergado\Google\GoogleTagManagerClass;
-use Mergado\Zbozi\ZboziClass;
+use Mergado\Arukereso\ArukeresoService;
+use Mergado\Etarget\EtargetService;
+use Mergado\Facebook\FacebookService;
+use Mergado\Glami\GlamiPixelService;
+use Mergado\Glami\GlamiTopService;
+use Mergado\Google\GoogleAdsService;
+use Mergado\Google\GoogleAnalyticsRefundService;
+use Mergado\Google\GoogleReviewsService;
+use Mergado\Google\GoogleTagManagerService;
+use Mergado\NajNakup\NajNakupService;
+use Mergado\Pricemania\PricemaniaService;
+use Mergado\Zbozi\ZboziService;
 
 include_once __MERGADO_DIR__ . 'autoload.php';
 
@@ -79,22 +82,6 @@ class Settings
         'ECOMMERCE_ENHANCED' => 'mergado_google_analytics_ecommerce_enhanced',
         'CONVERSION_VAT_INCL' => 'gtagjs-vat-included',
     );
-
-    const ETARGET = [
-        'ACTIVE' => 'etarget-form-active',
-        'HASH' => 'etarget-form-hash',
-        'ID' => 'etarget-form-id'
-    ];
-
-    const NAJNAKUP = [
-        'ACTIVE' => 'najnakup-form-active',
-        'ID' => 'najnakup-form-id'
-    ];
-
-    const PRICEMANIA = [
-        'ACTIVE' => 'pricemania-form-active',
-        'ID' => 'pricemania-form-id'
-    ];
 
     const HEUREKA = [
         //Verified
@@ -433,14 +420,17 @@ class Settings
         $xmlCategoryFeed = new XMLCategoryFeed();
         $xmlStockFeed = new XMLStockFeed();
         $importPricesClass = new ImportPricesClass();
-        $googleAds = new GoogleAdsClass();
-        $googleTagManager = new GoogleTagManagerClass();
-        $googleReviewsClass = new GoogleReviewsClass();
-        $arukeresoClass = new ArukeresoClass();
-        $glamiPixelClass = new GlamiPixelClass();
-        $glamiTopClass = new GlamiTopClass();
-        $zboziClass = new ZboziClass();
-        $facebookClass = new FacebookClass();
+        $googleAdsService = new GoogleAdsService();
+        $googleTagManagerService = new GoogleTagManagerService();
+        $googleReviewsService = new GoogleReviewsService();
+        $arukeresoService = new ArukeresoService();
+        $glamiPixelService = new GlamiPixelService();
+        $glamiTopService = new GlamiTopService();
+        $zboziService = new ZboziService();
+        $facebookService = new FacebookService();
+		$etargetService = new EtargetService();
+		$najNakupService = new NajNakupService();
+		$pricemaniaService = new PricemaniaService();
 
         if (class_exists('WooCommerce')) {
             global $woocommerce;
@@ -545,34 +535,34 @@ class Settings
                 ],
             ],
             'adsystems' => [
-                'googleAds' => self::boolToActive($googleAds->getConversionActive()),
-                'googleAdsRemarketing' => self::boolToActive($googleAds->getRemarketingActive()),
+                'googleAds' => self::boolToActive($googleAdsService->getConversionActive()),
+                'googleAdsRemarketing' => self::boolToActive($googleAdsService->getRemarketingActive()),
                 'googleAnalytics' => self::boolToActive(get_option(Settings::GOOGLE_GTAGJS['ACTIVE'], 0)),
-                'googleAnalyticsRefunds' => self::boolToActive(get_option(GaRefundClass::ACTIVE, 0)),
-                'googleTagManager' => self::boolToActive($googleTagManager->getActive()),
-                'googleTagManagerEcommerce' => self::boolToActive($googleTagManager->getEcommerceActive()),
-                'googleTagManagerEnhancedEcommerce' => self::boolToActive($googleTagManager->getEnhancedEcommerceActive()),
-                'googleCustomerReviews' => self::boolToActive($googleReviewsClass->getOptInActive()),
-                'googleCustomerReviewsBadge' => self::boolToActive($googleReviewsClass->getBadgeActive()),
-                'facebookPixel' => self::boolToActive($facebookClass->getActive()),
+                'googleAnalyticsRefunds' => self::boolToActive(get_option(GoogleAnalyticsRefundService::ACTIVE, 0)),
+                'googleTagManager' => self::boolToActive($googleTagManagerService->getActive()),
+                'googleTagManagerEcommerce' => self::boolToActive($googleTagManagerService->getEcommerceActive()),
+                'googleTagManagerEnhancedEcommerce' => self::boolToActive($googleTagManagerService->getEnhancedEcommerceActive()),
+                'googleCustomerReviews' => self::boolToActive($googleReviewsService->getOptInActive()),
+                'googleCustomerReviewsBadge' => self::boolToActive($googleReviewsService->getBadgeActive()),
+                'facebookPixel' => self::boolToActive($facebookService->getActive()),
                 'heurekaVerify' => self::boolToActive(get_option(Settings::HEUREKA['ACTIVE_CZ'], 0)),
                 'heurekaVerifyWidget' => self::boolToActive(get_option(Settings::HEUREKA['WIDGET_CZ'], 0)),
                 'heurekaConversions' => self::boolToActive(get_option(Settings::HEUREKA['ACTIVE_TRACK_CZ'], 0)),
                 'heurekaVerifySk' => self::boolToActive(get_option(Settings::HEUREKA['ACTIVE_SK'], 0)),
                 'heurekaVerifySkWidget' => self::boolToActive(get_option(Settings::HEUREKA['WIDGET_SK'], 0)),
                 'heurekaConversionsSk' => self::boolToActive(get_option(Settings::HEUREKA['ACTIVE_TRACK_SK'], 0)),
-                'glamiPixel' => self::boolToActive($glamiPixelClass->getActive()),
-                'glamiTop' => self::boolToActive($glamiTopClass->getActive()),
+                'glamiPixel' => self::boolToActive($glamiPixelService->getActive()),
+                'glamiTop' => self::boolToActive($glamiTopService->getActive()),
                 'sklik' => self::boolToActive(get_option(Settings::SKLIK['CONVERSION_ACTIVE'], 0)),
                 'sklikRetargeting' => self::boolToActive(get_option(Settings::SKLIK['RETARGETING_ACTIVE'], 0)),
-                'zbozi' => self::boolToActive($zboziClass->getActive()),
-                'etarget' => self::boolToActive(get_option(Settings::ETARGET['ACTIVE'], 0)),
-                'najnakup' => self::boolToActive(get_option(Settings::NAJNAKUP['ACTIVE'], 0)),
-                'pricemania' => self::boolToActive(get_option(Settings::PRICEMANIA['ACTIVE'], 0)),
+                'zbozi' => self::boolToActive($zboziService->getActive()),
+                'etarget' => self::boolToActive($etargetService->getActive()),
+                'najnakup' => self::boolToActive($najNakupService->getActive()),
+                'pricemania' => self::boolToActive($pricemaniaService->getActive()),
                 'kelkoo' => self::boolToActive(get_option(Settings::KELKOO['ACTIVE'], 0)),
                 'biano' => self::boolToActive(get_option(Settings::BIANO['ACTIVE'], 0)),
-                'arukereso' => self::boolToActive($arukeresoClass->getActive()),
-                'arukeresoWidget' => self::boolToActive($arukeresoClass->getWidgetActive()),
+                'arukereso' => self::boolToActive($arukeresoService->getActive()),
+                'arukeresoWidget' => self::boolToActive($arukeresoService->getWidgetActive()),
             ]
 
         ];

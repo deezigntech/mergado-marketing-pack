@@ -18,7 +18,7 @@ namespace Mergado\Google;
 
 use Mergado;
 
-class GoogleAdsClass
+class GoogleAdsService
 {
     const CONVERSION_ACTIVE = 'adwords-form-conversion-active';
     const REMARKETING_ACTIVE = 'adwords-form-remarketing-active';

@@ -18,7 +18,7 @@ namespace Mergado\Google;
 
 use Mergado;
 
-class GoogleTagManagerClass
+class GoogleTagManagerService
 {
     const ACTIVE = 'mergado_google_tag_manager_active';
     const CODE = 'mergado_google_tag_manager_code';

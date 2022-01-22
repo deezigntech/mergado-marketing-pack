@@ -18,7 +18,7 @@ namespace Mergado\Glami;
 
 use Mergado\Tools\Settings;
 
-class GlamiPixelClass {
+class GlamiPixelService {
 	const ACTIVE = 'glami-form-active';
 	const ACTIVE_LANG = 'glami-form-active-lang';
 	const CODE = 'glami-form-pixel';

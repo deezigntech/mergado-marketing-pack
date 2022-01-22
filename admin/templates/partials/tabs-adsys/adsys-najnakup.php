@@ -1,4 +1,8 @@
-<?php use Mergado\Tools\Settings; ?>
+<?php
+    use Mergado\NajNakup\NajNakupService;
+
+    $najNakupService = new NajNakupService();
+?>
 
 <div class="card full">
     <h3><?php _e('NajNakup.sk', 'mergado-marketing-pack') ?></h3>
@@ -7,19 +11,19 @@
         <tbody>
         <tr>
             <th>
-                <label for="najnakup-form-active"><?php _e('Active', 'mergado-marketing-pack') ?></label>
+                <label for="<?php echo $najNakupService::ACTIVE; ?>"><?php _e('Active', 'mergado-marketing-pack') ?></label>
             </th>
-            <td><input type="checkbox" id="najnakup-form-active" name="najnakup-form-active" data-mmp-check-main="najnakup"
-                       <?php if (get_option(Settings::NAJNAKUP['ACTIVE'], 0) == 1){ ?>checked="checked"<?php } ?>>
+            <td><input type="checkbox" id="<?php echo $najNakupService::ACTIVE; ?>" name="<?php echo $najNakupService::ACTIVE; ?>" data-mmp-check-main="najnakup"
+                       <?php if ($najNakupService->getActive() == 1){ ?>checked="checked"<?php } ?>>
             </td>
         </tr>
         <tr>
             <th>
-                <label for="najnakup-form-id"><?php _e('NajNakup shop ID', 'mergado-marketing-pack') ?></label>
+                <label for="<?php echo $najNakupService::ID; ?>"><?php _e('NajNakup shop ID', 'mergado-marketing-pack') ?></label>
             </th>
-            <td><input type="text" id="najnakup-form-id" name="najnakup-form-id" data-mmp-check-field="najnakup"
+            <td><input type="text" id="<?php echo $najNakupService::ID; ?>" name="<?php echo $najNakupService::ID; ?>" data-mmp-check-field="najnakup"
                        placeholder="<?php _e('Insert code here', 'mergado-marketing-pack') ?>"
-                       value="<?php echo get_option(Settings::NAJNAKUP['ID'], ''); ?>">
+                       value="<?php echo $najNakupService->getId(); ?>">
                 <br><small class="badge badge_question"><?= _e('Your unique store ID for Najnakup.sk.', 'mergado-marketing-pack') ?></small>
             </td>
         </tr>

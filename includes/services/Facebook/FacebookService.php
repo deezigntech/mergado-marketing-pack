@@ -18,7 +18,7 @@ namespace Mergado\Facebook;
 
 use Mergado\Tools\Settings;
 
-class FacebookClass {
+class FacebookService {
 	const ACTIVE = 'facebook-form-active';
 	const CODE = 'facebook-form-pixel';
 	const CONVERSION_VAT_INCL = 'facebook-vat-included';

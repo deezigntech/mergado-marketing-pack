@@ -16,7 +16,7 @@
  * Plugin Name:       Mergado marketing pack
  * Plugin URI:        https://www.mergado.cz
  * Description:       Earn more on price comparator sites. <strong>REQUIRES: Woocommerce</strong>
- * Version:           3.1.1
+ * Version:           3.2.1
  * Author:            Mergado technologies, s. r. o.
  * Author URI:        https://www.mergado.cz
  * License:           GPL-2.0+
@@ -42,7 +42,7 @@ if (!defined('WPINC')) {
     die;
 }
 
-define('PLUGIN_VERSION', '3.1.1');
+define('PLUGIN_VERSION', '3.2.1');
 define('WOOCOMMERCE_DEPENCENCY_MESSAGE', __('Mergado Pack plugin requires <a href="/wp-admin/plugin-install.php?tab=plugin-information&plugin=woocommerce" target="_top">WooCommerce</a> plugin to be active!', 'mergado-marketing-pack'));
 define( '__MERGADO_DIR__', plugin_dir_path( __FILE__ ) );
 define( '__MERGADO_BASE_FILE__', plugin_dir_path( __FILE__ ) . 'mergado-marketing-pack.php' );

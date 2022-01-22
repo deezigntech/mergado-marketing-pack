@@ -1,13 +1,13 @@
 <?php
 
-use Mergado\Google\GaRefundClass;
-use Mergado\Google\GoogleAdsClass;
-use Mergado\Google\GoogleReviewsClass;
-use Mergado\Google\GoogleTagManagerClass;
+use Mergado\Google\GoogleAnalyticsRefundService;
+use Mergado\Google\GoogleAdsService;
+use Mergado\Google\GoogleReviewsService;
+use Mergado\Google\GoogleTagManagerService;
 use Mergado\Tools\Settings;
 
-$googleAds = new GoogleAdsClass();
-$googleTagManager = new GoogleTagManagerClass();
+$googleAds = new GoogleAdsService();
+$googleTagManager = new GoogleTagManagerService();
 
 global $wpdb;
 
@@ -272,29 +272,29 @@ This setting does not affect total revenue. The total revenue of the transaction
         <tbody>
         <tr>
             <th>
-                <label for="<?= GaRefundClass::ACTIVE ?>"><?= __('Active', 'mergado-marketing-pack') ?></label>
+                <label for="<?= GoogleAnalyticsRefundService::ACTIVE ?>"><?= __('Active', 'mergado-marketing-pack') ?></label>
             </th>
-            <td><input type="checkbox" id="<?= GaRefundClass::ACTIVE ?>"
-                       name="<?= GaRefundClass::ACTIVE ?>"
+            <td><input type="checkbox" id="<?= GoogleAnalyticsRefundService::ACTIVE ?>"
+                       name="<?= GoogleAnalyticsRefundService::ACTIVE ?>"
                        data-mmp-check-main="ga-refund-active"
-                       <?php if (get_option(GaRefundClass::ACTIVE, 0) == 1){ ?>checked="checked"<?php } ?>>
+                       <?php if ( get_option(GoogleAnalyticsRefundService::ACTIVE, 0) == 1){ ?>checked="checked"<?php } ?>>
                 <!--                    <br><small class="badge badge_info">-->
                 <? //= _e('Whenever you make a refund for entire products or an entire order, the module sends a refund information to Google Analytics. Regardless of the status of the order.', 'mergado-marketing-pack') ?><!--</small>-->
             </td>
         </tr>
         <tr>
             <th>
-                <label for="<?= GaRefundClass::CODE ?>"><?= __('Google analytics code', 'mergado-marketing-pack') ?></label>
+                <label for="<?= GoogleAnalyticsRefundService::CODE ?>"><?= __('Google analytics code', 'mergado-marketing-pack') ?></label>
             </th>
-            <td><input type="text" id="<?= GaRefundClass::CODE ?>" name="<?= GaRefundClass::CODE ?>"
+            <td><input type="text" id="<?= GoogleAnalyticsRefundService::CODE ?>" name="<?= GoogleAnalyticsRefundService::CODE ?>"
                        data-mmp-check-field="ga-refund-active"
                        placeholder="<?= __('Insert code here', 'mergado-marketing-pack') ?>"
-                       value="<?= get_option(GaRefundClass::CODE, ''); ?>">
+                       value="<?= get_option(GoogleAnalyticsRefundService::CODE, ''); ?>">
             </td>
         </tr>
         <tr>
             <th>
-                <label for="<?= GaRefundClass::CODE ?>"><?= __('Order refund status', 'mergado-marketing-pack') ?></label>
+                <label for="<?= GoogleAnalyticsRefundService::CODE ?>"><?= __('Order refund status', 'mergado-marketing-pack') ?></label>
             </th>
             <td>
                 <small class="badge badge_info"><?= __('Select the order statuses at which the entire order will be refunded. When order status will change to the selected one, refund information will be send to Google Analytics. Note: Woocommerce automatically make Full refund when "Refunded" status is selected.', 'mergado-marketing-pack') ?></small>
@@ -303,13 +303,13 @@ This setting does not affect total revenue. The total revenue of the transaction
 
                 <table>
                     <tbody>
-                    <?php $GaRefundClass = new GaRefundClass(); ?>
+                    <?php $GaRefundClass = new GoogleAnalyticsRefundService(); ?>
                     <?php foreach (wc_get_order_statuses() as $key => $data): ?>
                         <tr>
                             <th class="px-0 pt-0 pb-5px fw-500"><?= $data ?></th>
                             <td class="px-0 pt-0 pb-5px">
-                                <input type="checkbox" id="<?= GaRefundClass::STATUS . $key ?>"
-                                       name="<?= GaRefundClass::STATUS . $key ?>"
+                                <input type="checkbox" id="<?= GoogleAnalyticsRefundService::STATUS . $key ?>"
+                                       name="<?= GoogleAnalyticsRefundService::STATUS . $key ?>"
                                        data-mmp-check-field="ga-refund-active"
                                        <?php if ($GaRefundClass->isStatusActive($key) == 1){ ?>checked="checked"<?php } ?>>
                             </td>
@@ -335,12 +335,12 @@ This setting does not affect total revenue. The total revenue of the transaction
         <tbody>
         <tr>
             <th>
-                <label for="<?= GoogleReviewsClass::OPT_IN_ACTIVE ?>"><?= __('Module active', 'mergado-marketing-pack') ?></label>
+                <label for="<?= GoogleReviewsService::OPT_IN_ACTIVE ?>"><?= __('Module active', 'mergado-marketing-pack') ?></label>
             </th>
-            <td><input type="checkbox" id="<?= GoogleReviewsClass::OPT_IN_ACTIVE ?>"
-                       name="<?= GoogleReviewsClass::OPT_IN_ACTIVE ?>"
-                       data-mmp-check-main="<?= GoogleReviewsClass::OPT_IN_ACTIVE ?>"
-                       <?php if (get_option(GoogleReviewsClass::OPT_IN_ACTIVE, 0) == 1){ ?>checked="checked"<?php } ?>>
+            <td><input type="checkbox" id="<?= GoogleReviewsService::OPT_IN_ACTIVE ?>"
+                       name="<?= GoogleReviewsService::OPT_IN_ACTIVE ?>"
+                       data-mmp-check-main="<?= GoogleReviewsService::OPT_IN_ACTIVE ?>"
+                       <?php if ( get_option(GoogleReviewsService::OPT_IN_ACTIVE, 0) == 1){ ?>checked="checked"<?php } ?>>
                 <br><small
                         class="badge badge_info"><?= __('Show google merchant opt-in on checkout page. To active Customer Reviews log into your Merchant Center > Growth > Manage programs > enable Reviews card.', 'mergado-marketing-pack') ?></small>
             </td>
@@ -348,13 +348,13 @@ This setting does not affect total revenue. The total revenue of the transaction
 
         <tr>
             <th>
-                <label for="<?= GoogleReviewsClass::MERCHANT_ID ?>"><?= __('Merchant Id', 'mergado-marketing-pack') ?></label>
+                <label for="<?= GoogleReviewsService::MERCHANT_ID ?>"><?= __('Merchant Id', 'mergado-marketing-pack') ?></label>
             </th>
-            <td><input type="text" id="<?= GoogleReviewsClass::MERCHANT_ID ?>"
-                       name="<?= GoogleReviewsClass::MERCHANT_ID ?>"
-                       data-mmp-check-field="<?= GoogleReviewsClass::OPT_IN_ACTIVE ?>"
+            <td><input type="text" id="<?= GoogleReviewsService::MERCHANT_ID ?>"
+                       name="<?= GoogleReviewsService::MERCHANT_ID ?>"
+                       data-mmp-check-field="<?= GoogleReviewsService::OPT_IN_ACTIVE ?>"
                        placeholder="<?= __('Insert code here', 'mergado-marketing-pack') ?>"
-                       value="<?= get_option(GoogleReviewsClass::MERCHANT_ID, ''); ?>">
+                       value="<?= get_option(GoogleReviewsService::MERCHANT_ID, ''); ?>">
                 <br><small
                         class="badge badge_question"><?= __('You can get this value from the Google Merchant Center. It\'s the same as your Google Merchant ID', 'mergado-marketing-pack') ?></small>
             </td>
@@ -362,15 +362,15 @@ This setting does not affect total revenue. The total revenue of the transaction
 
         <tr>
             <th>
-                <label for="<?= GoogleReviewsClass::OPT_IN_GTIN ?>"><?= __('Field for GTIN values', 'mergado-marketing-pack'); ?></label>
+                <label for="<?= GoogleReviewsService::OPT_IN_GTIN ?>"><?= __('Field for GTIN values', 'mergado-marketing-pack'); ?></label>
             </th>
             <td>
-                <select name="<?= GoogleReviewsClass::OPT_IN_GTIN ?>"
-                        id="<?= GoogleReviewsClass::OPT_IN_GTIN ?>"
-                        data-mmp-check-field="<?= GoogleReviewsClass::OPT_IN_ACTIVE ?>">
+                <select name="<?= GoogleReviewsService::OPT_IN_GTIN ?>"
+                        id="<?= GoogleReviewsService::OPT_IN_GTIN ?>"
+                        data-mmp-check-field="<?= GoogleReviewsService::OPT_IN_ACTIVE ?>">
                     <?php foreach ($fields as $id => $data): ?>
                         <option
-                            <?php if (get_option(GoogleReviewsClass::OPT_IN_GTIN, 0) == $data){ ?>selected="selected"<?php } ?>
+                            <?php if ( get_option(GoogleReviewsService::OPT_IN_GTIN, 0) == $data){ ?>selected="selected"<?php } ?>
                             value="<?= $data ?>"><?= $data ?></option>
                     <?php endforeach ?>
                 </select>
@@ -381,13 +381,13 @@ This setting does not affect total revenue. The total revenue of the transaction
 
         <tr>
             <th>
-                <label for="<?= GoogleReviewsClass::OPT_IN_DELIVERY_DATE ?>"><?= __('Days to send', 'mergado-marketing-pack') ?></label>
+                <label for="<?= GoogleReviewsService::OPT_IN_DELIVERY_DATE ?>"><?= __('Days to send', 'mergado-marketing-pack') ?></label>
             </th>
-            <td><input type="text" id="<?= GoogleReviewsClass::OPT_IN_DELIVERY_DATE ?>"
-                       name="<?= GoogleReviewsClass::OPT_IN_DELIVERY_DATE ?>"
-                       data-mmp-check-field="<?= GoogleReviewsClass::OPT_IN_ACTIVE ?>"
+            <td><input type="text" id="<?= GoogleReviewsService::OPT_IN_DELIVERY_DATE ?>"
+                       name="<?= GoogleReviewsService::OPT_IN_DELIVERY_DATE ?>"
+                       data-mmp-check-field="<?= GoogleReviewsService::OPT_IN_ACTIVE ?>"
                        placeholder="<?= __('Insert code here', 'mergado-marketing-pack') ?>"
-                       value="<?= get_option(GoogleReviewsClass::OPT_IN_DELIVERY_DATE, ''); ?>">
+                       value="<?= get_option(GoogleReviewsService::OPT_IN_DELIVERY_DATE, ''); ?>">
                 <br><small
                         class="badge badge_question"><?= __('Number of days after ordering, when the email will be send to customers. Only numbers are accepted!', 'mergado-marketing-pack') ?></small>
             </td>
@@ -395,15 +395,15 @@ This setting does not affect total revenue. The total revenue of the transaction
 
         <tr>
             <th>
-                <label for="<?= GoogleReviewsClass::OPT_IN_POSITION ?>"><?= __('Opt-in position', 'mergado-marketing-pack'); ?></label>
+                <label for="<?= GoogleReviewsService::OPT_IN_POSITION ?>"><?= __('Opt-in position', 'mergado-marketing-pack'); ?></label>
             </th>
             <td>
-                <select name="<?= GoogleReviewsClass::OPT_IN_POSITION ?>"
-                        id="<?= GoogleReviewsClass::OPT_IN_POSITION ?>"
-                        data-mmp-check-field="<?= GoogleReviewsClass::OPT_IN_ACTIVE ?>">
-                    <?php foreach (GoogleReviewsClass::OPT_IN_POSITIONS_FOR_SELECT() as $key => $data): ?>
+                <select name="<?= GoogleReviewsService::OPT_IN_POSITION ?>"
+                        id="<?= GoogleReviewsService::OPT_IN_POSITION ?>"
+                        data-mmp-check-field="<?= GoogleReviewsService::OPT_IN_ACTIVE ?>">
+                    <?php foreach (GoogleReviewsService::OPT_IN_POSITIONS_FOR_SELECT() as $key => $data): ?>
                         <option
-                            <?php if (get_option(GoogleReviewsClass::OPT_IN_POSITION, 0) == $data['id']){ ?>selected="selected"<?php } ?>
+                            <?php if ( get_option(GoogleReviewsService::OPT_IN_POSITION, 0) == $data['id']){ ?>selected="selected"<?php } ?>
                             value="<?= $data['id'] ?>"><?= $data['name'] ?></option>
                     <?php endforeach ?>
                 </select>
@@ -414,13 +414,13 @@ This setting does not affect total revenue. The total revenue of the transaction
 
         <tr>
             <th>
-                <label for="<?= GoogleReviewsClass::BADGE_ACTIVE ?>"><?= __('Badge active', 'mergado-marketing-pack') ?></label>
+                <label for="<?= GoogleReviewsService::BADGE_ACTIVE ?>"><?= __('Badge active', 'mergado-marketing-pack') ?></label>
             </th>
-            <td><input type="checkbox" id="<?= GoogleReviewsClass::BADGE_ACTIVE ?>"
-                       name="<?= GoogleReviewsClass::BADGE_ACTIVE ?>"
-                       data-mmp-check-main="<?= GoogleReviewsClass::BADGE_ACTIVE ?>"
-                       data-mmp-check-field="<?= GoogleReviewsClass::OPT_IN_ACTIVE ?>"
-                       <?php if (get_option(GoogleReviewsClass::BADGE_ACTIVE, 0) == 1){ ?>checked="checked"<?php } ?>>
+            <td><input type="checkbox" id="<?= GoogleReviewsService::BADGE_ACTIVE ?>"
+                       name="<?= GoogleReviewsService::BADGE_ACTIVE ?>"
+                       data-mmp-check-main="<?= GoogleReviewsService::BADGE_ACTIVE ?>"
+                       data-mmp-check-field="<?= GoogleReviewsService::OPT_IN_ACTIVE ?>"
+                       <?php if ( get_option(GoogleReviewsService::BADGE_ACTIVE, 0) == 1){ ?>checked="checked"<?php } ?>>
                 <br><small
                         class="badge badge_info"><?= __('Show review rating badge on prefered location.', 'mergado-marketing-pack') ?></small>
             </td>
@@ -428,15 +428,15 @@ This setting does not affect total revenue. The total revenue of the transaction
 
         <tr>
             <th>
-                <label for="<?= GoogleReviewsClass::BADGE_POSITION ?>"><?= __('Badge position', 'mergado-marketing-pack'); ?></label>
+                <label for="<?= GoogleReviewsService::BADGE_POSITION ?>"><?= __('Badge position', 'mergado-marketing-pack'); ?></label>
             </th>
             <td>
                 <div>
-                    <select name="<?= GoogleReviewsClass::BADGE_POSITION ?>" id="<?= GoogleReviewsClass::BADGE_POSITION ?>"
-                            data-mmp-check-field="<?= GoogleReviewsClass::BADGE_ACTIVE ?>">
-                        <?php foreach (GoogleReviewsClass::BADGE_POSITIONS_FOR_SELECT() as $key => $data): ?>
+                    <select name="<?= GoogleReviewsService::BADGE_POSITION ?>" id="<?= GoogleReviewsService::BADGE_POSITION ?>"
+                            data-mmp-check-field="<?= GoogleReviewsService::BADGE_ACTIVE ?>">
+                        <?php foreach (GoogleReviewsService::BADGE_POSITIONS_FOR_SELECT() as $key => $data): ?>
                             <option
-                                <?php if (get_option(GoogleReviewsClass::BADGE_POSITION, 0) == $data['id']){ ?>selected="selected"<?php } ?>
+                                <?php if ( get_option(GoogleReviewsService::BADGE_POSITION, 0) == $data['id']){ ?>selected="selected"<?php } ?>
                                 value="<?= $data['id'] ?>"><?= $data['name'] ?></option>
                         <?php endforeach ?>
                     </select>
@@ -450,14 +450,14 @@ This setting does not affect total revenue. The total revenue of the transaction
 
         <tr>
             <th>
-                <label for="<?= GoogleReviewsClass::LANGUAGE ?>"><?= __('Language', 'mergado-marketing-pack'); ?></label>
+                <label for="<?= GoogleReviewsService::LANGUAGE ?>"><?= __('Language', 'mergado-marketing-pack'); ?></label>
             </th>
             <td>
-                <select name="<?= GoogleReviewsClass::LANGUAGE ?>" id="<?= GoogleReviewsClass::LANGUAGE ?>"
-                        data-mmp-check-field="<?= GoogleReviewsClass::OPT_IN_ACTIVE ?>">
-                    <?php foreach (GoogleReviewsClass::LANGUAGES() as $key => $data): ?>
+                <select name="<?= GoogleReviewsService::LANGUAGE ?>" id="<?= GoogleReviewsService::LANGUAGE ?>"
+                        data-mmp-check-field="<?= GoogleReviewsService::OPT_IN_ACTIVE ?>">
+                    <?php foreach (GoogleReviewsService::LANGUAGES() as $key => $data): ?>
                         <option
-                            <?php if (get_option(GoogleReviewsClass::LANGUAGE, 0) == $data['id']){ ?>selected="selected"<?php } ?>
+                            <?php if ( get_option(GoogleReviewsService::LANGUAGE, 0) == $data['id']){ ?>selected="selected"<?php } ?>
                             value="<?= $data['id'] ?>"><?= $data['name'] ?></option>
                     <?php endforeach ?>
                 </select>

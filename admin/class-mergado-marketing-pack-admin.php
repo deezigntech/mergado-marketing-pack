@@ -65,12 +65,6 @@ class Megrado_export extends WC_Product_CSV_Exporter {
         return $this->row_data;
     }
 
-    public function generate_product_data( $product_id ){
-        $product = \wc_get_product( $product_id );
-        $row_data = $this->generate_row_data( $product );
-        return $row_data;
-    }
-
 }
 
 class Mergado_Marketing_Pack_Admin {
@@ -105,14 +99,18 @@ class Mergado_Marketing_Pack_Admin {
         $this->plugin_name = $plugin_name;
         $this->version = $version;
 
-        $cronRss = new RssClass();
-        $cronRss->getFeed();
 
         self::init_hooks();
     }
 
+
     public static function init_hooks() {
         add_action('admin_menu', array('Mergado_Marketing_Pack_Admin', 'admin_menu'));
+
+		add_action('init', function () {
+			$cronRss = new RssClass();
+			$cronRss->getFeed();
+		});
     }
 
     public static function admin_menu() {
@@ -164,6 +162,13 @@ class Mergado_Marketing_Pack_Admin {
 	        $otherItemText,
 	        'manage_options', 'mergado-feeds-other', array('Mergado_Marketing_Pack_Admin', 'display'));
         add_submenu_page('mergado-config', __('Ad Systems', 'mergado-marketing-pack'), __('Ad Systems', 'mergado-marketing-pack'), 'manage_options', 'mergado-adsys', array('Mergado_Marketing_Pack_Admin', 'display'));
+        add_submenu_page('mergado-config',
+            __('Cookies', 'mergado-marketing-pack'),
+            __('Cookies', 'mergado-marketing-pack'),
+            'manage_options',
+            'mergado-cookies',
+            array('Mergado_Marketing_Pack_Admin', 'display'));
+
         add_submenu_page('mergado-config', __('News', 'mergado-marketing-pack'), __('News', 'mergado-marketing-pack'), 'manage_options', 'mergado-news', array('Mergado_Marketing_Pack_Admin', 'display'));
         add_submenu_page('mergado-config', __('Support', 'mergado-marketing-pack'), __('Support', 'mergado-marketing-pack'), 'manage_options', 'mergado-support', array('Mergado_Marketing_Pack_Admin', 'display'));
         add_submenu_page('mergado-config', __('Licence', 'mergado-marketing-pack'), __('Licence', 'mergado-marketing-pack'), 'manage_options', 'mergado-licence', array('Mergado_Marketing_Pack_Admin', 'display'));
@@ -266,6 +271,9 @@ class Mergado_Marketing_Pack_Admin {
                     case 'mergado-news':
                         require_once ( __DIR__ . '/templates/template-mergado-marketing-pack-display-news.php' );
                         break;
+	                case 'mergado-cookies':
+		                require_once ( __DIR__ . '/templates/template-mergado-marketing-pack-display-adsys.php' );
+		                break;
                     case 'mergado-feeds-product':
                         require_once ( __DIR__ . '/templates/template-mergado-marketing-pack-display-feeds-product.php' );
                         break;

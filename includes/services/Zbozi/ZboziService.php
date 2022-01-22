@@ -18,7 +18,7 @@ namespace Mergado\Zbozi;
 
 use Mergado;
 
-class ZboziClass
+class ZboziService
 {
     const ZBOZI_SANDBOX = false;
 

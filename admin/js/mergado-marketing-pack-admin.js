@@ -351,7 +351,9 @@
 			});
 		});
 
-		$('iframe').iFrameResize([{}]);
+		if ($('iframe').length > 0) {
+			$('iframe').iFrameResize([{}]);
+		}
 	});
 
 	function generateInlineCodeForGoogleReviews()

@@ -15,8 +15,19 @@
                 n.parentNode.insertBefore(o, n)
             })(window, document, 'script', '//www.glami.cz/js/compiled/pt.js', 'glami');
 
-            glami('create', __glamiCode, __lang);
-            glami('track', 'PageView');
+            glami('create',
+                __glamiCode,
+                __lang,
+                {
+                    consent: window.mmp.cookies.sections.advertisement.onloadStatus,
+                }
+            );
+            glami('track',
+                'PageView',
+                {
+                    consent: window.mmp.cookies.sections.advertisement.onloadStatus,
+                }
+            );
         }
     });
 
@@ -42,7 +53,8 @@
                         item_ids: [$_id],
                         product_names: [$_name],
                         value: $_price,
-                        currency: $_currency
+                        currency: $_currency,
+                        consent: window.mmp.cookies.sections.advertisement.onloadStatus
                     });
                 }
             });

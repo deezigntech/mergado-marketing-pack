@@ -16,5 +16,9 @@
       urlParams.set('mmp-tab', $(this).attr('data-mmp-tab-button'));
       window.history.pushState('', '',  'admin.php?' + urlParams);
     });
+
+    if (window.location.href.indexOf("page=mergado-cookies") > -1 && window.location.href.indexOf("mmp-tab=") <= -1) {
+      jQuery('[data-mmp-tab-button="cookies"]').click();
+    }
   });
 })(jQuery)

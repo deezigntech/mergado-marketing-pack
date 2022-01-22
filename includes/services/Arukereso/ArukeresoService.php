@@ -22,7 +22,7 @@ use TrustedShop;
 
 include_once __MERGADO_DIR__ . 'autoload.php';
 
-class ArukeresoClass
+class ArukeresoService
 {
     // BASE
     const ACTIVE = 'arukereso-active';
@@ -255,9 +255,9 @@ class ArukeresoClass
     public static function orderConfirmation($orderId)
     {
         $confirmed = get_post_meta($orderId, 'arukereso-verify-checkbox', true);
-        $arukeresoClass = new ArukeresoClass();
+        $arukeresoService = new ArukeresoService();
 
-        if ($arukeresoClass->isActive()) {
+        if ($arukeresoService->isActive()) {
             if (empty($confirmed)) {
                 $order = wc_get_order($orderId);
                 $products = [];
@@ -277,7 +277,7 @@ class ArukeresoClass
 
                 try {
                     /** Provide your own WebAPI key. You can find your WebAPI key on your partner portal. */
-                    $Client = new TrustedShop($arukeresoClass->getWebApiKey());
+                    $Client = new TrustedShop($arukeresoService->getWebApiKey());
 
                     /** Provide the e-mail address of your customer. You can retrieve the e-amil address from the webshop engine. */
                     $Client->SetEmail($order->get_billing_email());

@@ -14,17 +14,24 @@
  */
 
 
-use Mergado\Arukereso\ArukeresoClass;
-use Mergado\Google\GaRefundClass;
-use Mergado\Google\GoogleReviewsClass;
-use Mergado\Heureka\HeurekaClass;
-use Mergado\Kelkoo\KelkooClass;
-use Mergado\NajNakup\NajNakupClass;
-use Mergado\Pricemania\PricemaniaClass;
+use Mergado\Arukereso\ArukeresoService;
+use Mergado\Facebook\FacebookService;
+use Mergado\Glami\GlamiPixelService;
+use Mergado\Glami\GlamiTopService;
+use Mergado\Google\GoogleAdsService;
+use Mergado\Google\GoogleAnalyticsRefundService;
+use Mergado\Google\GoogleReviewsService;
+use Mergado\Google\GoogleTagManagerService;
+use Mergado\Heureka\HeurekaService;
+use Mergado\NajNakup\NajNakup;
+use Mergado\Pricemania\Pricemania;
+use Mergado\Tools\CookieClass;
 use Mergado\Tools\Settings;
 use Mergado\Tools\Languages;
 use Mergado\Zbozi\Zbozi;
-use Mergado\Zbozi\ZboziClass;
+use Mergado\Zbozi\ZboziService;
+use Mergado\Etarget\EtargetServiceIntegration;
+use Mergado\Kelkoo\KelkooServiceIntegration;
 
 include_once __MERGADO_DIR__ . 'autoload.php';
 
@@ -94,12 +101,45 @@ class Mergado_Marketing_Pack
     protected $headerExtra = '';
 
     // Service classes
-    private $arukeresoClass;
-    private $googleAdsClass;
-    private $googleTagManagerClass;
-    private $glamiPixelClass;
-    private $glamiTopClass;
-    private $facebookClass;
+	/**
+	 * @var ArukeresoService
+	 */
+    private $arukeresoService;
+
+	/**
+	 * @var GoogleAdsService
+	 */
+    private $googleAdsService;
+
+	/**
+	 * @var GoogleTagManagerService
+	 */
+    private $googleTagManagerService;
+
+	/**
+	 * @var GlamiPixelService
+	 */
+    private $glamiPixelService;
+
+	/**
+	 * @var GlamiTopService
+	 */
+    private $glamiTopService;
+
+	/**
+	 * @var FacebookService
+	 */
+    private $facebookService;
+
+	/**
+	 * @var EtargetServiceIntegration
+	 */
+    private $etargetServiceIntegration;
+
+	/**
+	 * @var KelkooServiceIntegration
+	 */
+    private $kelkooServiceIntegration;
 
     /**
      * Define the core functionality of the plugin.
@@ -128,12 +168,16 @@ class Mergado_Marketing_Pack
         $this->updateDatabase();
 
         // Services inited
-        $this->arukeresoClass = new Mergado\Arukereso\ArukeresoClass();
-        $this->googleAdsClass = new Mergado\Google\GoogleAdsClass();
-        $this->googleTagManagerClass = new Mergado\Google\GoogleTagManagerClass();
-        $this->glamiPixelClass = new Mergado\Glami\GlamiPixelClass();
-        $this->glamiTopClass = new Mergado\Glami\GlamiTopClass();
-        $this->facebookClass = new Mergado\Facebook\FacebookClass();
+        $this->arukeresoService = new Mergado\Arukereso\ArukeresoService();
+        $this->googleAdsService = new Mergado\Google\GoogleAdsService();
+        $this->googleTagManagerService = new Mergado\Google\GoogleTagManagerService();
+        $this->glamiPixelService = new Mergado\Glami\GlamiPixelService();
+        $this->glamiTopService = new Mergado\Glami\GlamiTopService();
+        $this->facebookService = new FacebookService();
+
+        // Integrations
+        $this->etargetServiceIntegration = new EtargetServiceIntegration();
+        $this->kelkooServiceIntegration = new KelkooServiceIntegration();
     }
 
     /**
@@ -176,7 +220,8 @@ class Mergado_Marketing_Pack
          * The class responsible for defining all actions that occur in the public-facing
          * side of the site.
          */
-        require_once plugin_dir_path(dirname(__FILE__)) . 'public/class-mergado-marketing-pack-public.php';
+
+        require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-mergado-marketing-pack-public.php';
 
         $this->loader = new Mergado_Marketing_Pack_Loader();
     }
@@ -337,52 +382,72 @@ class Mergado_Marketing_Pack
 
     public function processFrontView()
     {
-        //Data to product list item
+        //Data to templates
         add_action("woocommerce_after_shop_loop_item", [$this, "productListData"], 99);
 
-        //Single
-        add_action('woocommerce_add_to_cart', [$this, 'glamiPixelAddToCart'], 99);
-        add_action('woocommerce_add_to_cart', [$this, 'fbPixelAddToCart'], 99);
-        add_action('woocommerce_add_to_cart', [$this, 'bianoAddToCart'], 99);
-        add_action('woocommerce_add_to_cart', [$this, 'gtagjsAddToCart'], 99);
-        add_action('woocommerce_add_to_cart', [$this, 'googleTagManagerAddToCart'], 99);
-        //add_action('woocommerce_after_single_product', [$this, 'adWordsRemarketingProduct'], 99); TODO: delete function in future
-        //add_action('woocommerce_after_cart', [$this, 'adsRemarketingCart'], 99); TODO: delete function in future
-        add_action("woocommerce_after_cart", [$this, 'gtagjsRemoveFromCartAjax'], 99);
-        add_action('woocommerce_after_main_content', [$this, 'data'], 98);
-        add_action('woocommerce_after_single_product', [$this, 'gtagjsProductDetailView'], 98);
-//        add_action('woocommerce_after_single_product', [$this, 'googleTagManagerProductDetailView'], 98);
+	    /**
+	     * ADVERTISEMENT
+	     */
 
-        //Checkout steps/options
-        add_action("woocommerce_before_checkout_billing_form", [$this, "gtagjs_checkout_step_1"], 99);
+        // GLAMI
+        add_action( 'wp_head', [ $this, 'glamiData' ], 98 ); // GLAMI
+        add_action('woocommerce_add_to_cart', [$this, 'glamiPixelAddToCart'], 99); // GLAMI
+
+
+        // BIANO
+	    if (CookieClass::advertismentEnabled()) {
+		    add_action( 'woocommerce_add_to_cart', [ $this, 'bianoAddToCart' ], 99 ); // BIANO
+	    }
+
+        // FB PIXEL
         add_action("woocommerce_before_checkout_billing_form", [$this, "fbPixel_initiateCheckout"], 99);
-//        add_action("woocommerce_before_checkout_billing_form", [$this, "googleTagManager_checkout_step"], 99);
+        add_action('woocommerce_add_to_cart', [$this, 'fbPixelAddToCart'], 99);
+
+	    /**
+	     * ANALYTICS
+	     */
+
+        // GTAG
+        add_action("woocommerce_after_cart", [$this, 'gtagjsRemoveFromCartAjax'], 99);
+        add_action("woocommerce_before_checkout_billing_form", [$this, "gtagjs_checkout_step_1"], 99);
         add_action("woocommerce_before_checkout_billing_form", [$this, "gtagjs_CheckoutManipulation"], 99);
-        add_action("woocommerce_before_checkout_billing_form", [$this, "googleTagManager_CheckoutManipulation"], 99);
         add_action("woocommerce_after_cart", [$this, "gtagjs_CheckoutManipulation"], 99);
+
+        add_action('woocommerce_after_single_product', [$this, 'gtagjsProductDetailView'], 98); // GDPR resolved inside
+        add_action('woocommerce_add_to_cart', [$this, 'gtagjsAddToCart'], 99); // GDPR resolved inside
+        add_action( "wp_footer", [ $this, "gtagjs_listView" ], 99 ); // GDPR resolved inside
+
+        // GTM
+        add_action('woocommerce_add_to_cart', [$this, 'googleTagManagerAddToCart'], 99);
+        add_action("woocommerce_before_checkout_billing_form", [$this, "googleTagManager_CheckoutManipulation"], 99);
         add_action("woocommerce_after_cart", [$this, "googleTagManager_CheckoutManipulation"], 99);
+        add_action("wp_footer", [$this, "googleTagManager_listView"], 99);
+
+
+        // GA refund - backend - not part of GDPR
+        add_action('woocommerce_order_fully_refunded', [$this, 'refundFull']);
+        add_action('woocommerce_order_status_changed', [$this, 'orderStatusChanged']);
+
+        //Checkout steps/options - checkboxs - not part of GDPR
         add_action("woocommerce_review_order_before_submit", [$this, "heurekaAddCheckboxVerifyOptOut"], 10);
         add_action("woocommerce_review_order_before_submit", [$this, "zboziAddCheckboxVerifyOptIn"], 10);
         add_action("woocommerce_review_order_before_submit", [$this, "arukeresoAddCheckboxVerifyOptOut"], 10);
         add_action("woocommerce_checkout_update_order_meta", [$this, "heurekaSetOrderMetaData"], 10);
         add_action("woocommerce_checkout_update_order_meta", [$this, "zboziSetOrderMetaData"], 10);
         add_action("woocommerce_checkout_update_order_meta", [$this, "arukeresoSetOrderMetaData"], 10);
-//        add_action("woocommerce_after_checkout_billing_form", [$this, "checkout_carrier_set"], 99); // not possible
-//        add_action("woocommerce_after_checkout_billing_form", [$this, "checkout_payment_set"], 99); // not possible
 
-        // List view
-        add_action("wp_footer", [$this, "gtagjs_listView"], 99);
-        add_action("wp_footer", [$this, "googleTagManager_listView"], 99);
+        //add_action('woocommerce_after_single_product', [$this, 'adWordsRemarketingProduct'], 99); TODO: delete function in future
+        //add_action('woocommerce_after_cart', [$this, 'adsRemarketingCart'], 99); TODO: delete function in future
+        //add_action('woocommerce_after_single_product', [$this, 'googleTagManagerProductDetailView'], 98);
+        //add_action("woocommerce_before_checkout_billing_form", [$this, "googleTagManager_checkout_step"], 99);
+        //add_action("woocommerce_after_checkout_billing_form", [$this, "checkout_carrier_set"], 99); // not possible
+        //add_action("woocommerce_after_checkout_billing_form", [$this, "checkout_payment_set"], 99); // not possible
+        //add_action('woocommerce_order_partially_refunded', [$this, 'refundPartial']); // Disabled for now
 
         // Multi
         add_action('wp_head', [$this, 'mergadoHeaderSetup'], 99);
         add_action('wp_footer', [$this, 'mergadoFooterSetup'], 98);
         add_action('woocommerce_thankyou', [$this, 'mergadoOrderConfirmed'], 99);
-
-        // Ga refund
-        add_action('woocommerce_order_fully_refunded', [$this, 'refundFull']);
-//        add_action('woocommerce_order_partially_refunded', [$this, 'refundPartial']); // Disabled for now
-        add_action('woocommerce_order_status_changed', [$this, 'orderStatusChanged']);
 
         if (function_exists( 'wp_body_open' ) ) {
             add_action('wp_body_open', [$this, 'wpBodyOpeningTag']);
@@ -394,7 +459,7 @@ class Mergado_Marketing_Pack
     {
 	    $alreadyRefunded = get_post_meta($orderId, 'orderFullyRefunded-' . $orderId, true);
 
-        $GaRefundClass = new GaRefundClass();
+        $GaRefundClass = new GoogleAnalyticsRefundService();
 
         if ($GaRefundClass->isActive()) {
             if ($GaRefundClass->isStatusActive($_POST['order_status'])) {
@@ -418,7 +483,7 @@ class Mergado_Marketing_Pack
     public function refundFull($orderId)
     {
         //Change status to refunded or if all prices filled when clicked refund button
-	    $GaRefundClass = new GaRefundClass();
+	    $GaRefundClass = new GoogleAnalyticsRefundService();
 	    if ($GaRefundClass->isActive()) {
 
 		    $alreadyRefunded = get_post_meta($orderId, 'orderFullyRefunded-' . $orderId, true);
@@ -433,7 +498,7 @@ class Mergado_Marketing_Pack
     // Refund only whole items.. not if lower price
     public function refundPartial($orderId)
     {
-        $GaRefundClass = new GaRefundClass();
+        $GaRefundClass = new GoogleAnalyticsRefundService();
         if ($GaRefundClass->isActive()) {
             $data = json_decode(stripslashes( $_POST['line_item_qtys']));
 
@@ -499,13 +564,13 @@ class Mergado_Marketing_Pack
 
     public function fbPixel_initiateCheckout($params)
     {
-        $active = $this->facebookClass->getActive();
+        $active = $this->facebookService->getActive();
 
         if ($active):
             global $woocommerce;
 
             $currency = get_woocommerce_currency();
-            $fbWithVat = $this->facebookClass->getConversionVatIncluded();
+            $fbWithVat = $this->facebookService->getConversionVatIncluded();
 
             $products = [];
             $quantity = 0;
@@ -622,11 +687,11 @@ class Mergado_Marketing_Pack
             $ecommerce = get_option(Settings::GOOGLE_GTAGJS['ECOMMERCE']);
             $ecommerceEnhanced = get_option(Settings::GOOGLE_GTAGJS['ECOMMERCE_ENHANCED']);
 
-            $googleAdsRemarketingActive = $this->googleAdsClass->isRemarketingActive();
+            $googleAdsRemarketingActive = $this->googleAdsService->isRemarketingActive();
 
-            if(($active == 1 && $tracking == 1 && $code != '' && $ecommerce == 1 && $ecommerceEnhanced == 1) || $googleAdsRemarketingActive):
+            if(($active == 1 && $tracking == 1 && $code != '' && $ecommerce == 1 && $ecommerceEnhanced == 1 ) || ($googleAdsRemarketingActive)):
 
-                $sendTo = implode(',', [$code, $this->googleAdsClass->getConversionCode()]);
+                $sendTo = implode(',', [$code, $this->googleAdsService->getConversionCode()]);
                 ?>
                     <script>
                       document.addEventListener('DOMContentLoaded', function () {
@@ -677,9 +742,9 @@ class Mergado_Marketing_Pack
                 $list_name = '';
             }
 
-            $active = $this->googleTagManagerClass->isActive();
-            $enhancedEcommerceActive = $this->googleTagManagerClass->isEnhancedEcommerceActive();
-            $viewListItemsCount = $this->googleTagManagerClass->getViewListItemsCount();
+            $active = $this->googleTagManagerService->isActive();
+            $enhancedEcommerceActive = $this->googleTagManagerService->isEnhancedEcommerceActive();
+            $viewListItemsCount = $this->googleTagManagerService->getViewListItemsCount();
 
             if($active && $enhancedEcommerceActive):
                 ?>
@@ -732,8 +797,8 @@ class Mergado_Marketing_Pack
     public function googleTagManagerCheckoutStep()
     {
         if (is_cart() || is_checkout()):
-            $active = $this->googleTagManagerClass->isActive();
-            $enhancedEcommerceActive = $this->googleTagManagerClass->isEnhancedEcommerceActive();
+            $active = $this->googleTagManagerService->isActive();
+            $enhancedEcommerceActive = $this->googleTagManagerService->isEnhancedEcommerceActive();
 
             if($active && $enhancedEcommerceActive):
                 global $woocommerce;
@@ -795,8 +860,8 @@ class Mergado_Marketing_Pack
 
     public function googleTagManager_CheckoutManipulation($params)
     {
-        $active = $this->googleTagManagerClass->isActive();
-        $enhancedEcommerceActive = $this->googleTagManagerClass->isEnhancedEcommerceActive();
+        $active = $this->googleTagManagerService->isActive();
+        $enhancedEcommerceActive = $this->googleTagManagerService->isEnhancedEcommerceActive();
 
         if($active && $enhancedEcommerceActive):
             ?>
@@ -959,7 +1024,7 @@ class Mergado_Marketing_Pack
         }
 
         $lang = Languages::getLang();
-        $active = $this->glamiPixelClass->isActive($lang);
+        $active = $this->glamiPixelService->isActive($lang);
 
         if ($active) {
             if (isset($_POST['add-to-cart'])) {
@@ -979,7 +1044,8 @@ class Mergado_Marketing_Pack
                                   item_ids: ['<?php echo $id; ?>'],
                                   product_names: ['<?php echo $product->get_name(); ?>'],
                                   value: <?php echo $product->get_price(); ?>,
-                                  currency: '<?php echo get_woocommerce_currency(); ?>'
+                                  currency: '<?php echo get_woocommerce_currency(); ?>',
+                                  consent: window.mmp.cookies.sections.advertisement.onloadStatus,
                                 });
                               });
                             </script>
@@ -1003,7 +1069,8 @@ class Mergado_Marketing_Pack
                           item_ids: ['<?php echo $id; ?>'],
                           product_names: ['<?php echo $product->get_name(); ?>'],
                           value: <?php echo $product->get_price(); ?>,
-                          currency: '<?php echo get_woocommerce_currency(); ?>'
+                          currency: '<?php echo get_woocommerce_currency(); ?>',
+                          consent: window.mmp.cookies.sections.advertisement.onloadStatus,
                         });
                       });
                     </script>
@@ -1018,7 +1085,7 @@ class Mergado_Marketing_Pack
 
     public function fbPixelAddToCartAjax()
     {
-        $active = $this->facebookClass->getActive();
+        $active = $this->facebookService->getActive();
 
 
         if ($active) {
@@ -1078,7 +1145,7 @@ class Mergado_Marketing_Pack
             return false;
         }
 
-        $active = $this->facebookClass->isActive();
+        $active = $this->facebookService->isActive();
         $currency = get_woocommerce_currency();
 
         if ($active) {
@@ -1267,24 +1334,28 @@ class Mergado_Marketing_Pack
 
         // Check if backend data already sent
         if (empty($confirmed) || self::TESTING) {
-            $googleReviewsClass = new GoogleReviewsClass();
-
+            $googleReviewsClass = new GoogleReviewsService();
             update_post_meta($orderId, 'orderConfirmed-' . $order->get_order_number(), 1);
+
             Zbozi::sendZbozi($orderId);
-            HeurekaClass::heurekaVerify($orderId);
-            NajNakupClass::sendNajnakupValuation($orderId);
-            PricemaniaClass::sendPricemaniaOverenyObchod($orderId);
-            HeurekaClass::heurekaOrderConfirmation($orderId);
+            HeurekaService::heurekaVerify($orderId);
+            NajNakup::sendNajnakupValuation($orderId);
+            Pricemania::sendPricemaniaOverenyObchod($orderId);
             $googleReviewsClass->getOptInTemplate($order);
-            ArukeresoClass::orderConfirmation($orderId);
+            ArukeresoService::orderConfirmation($orderId);
             $this->fbPixelPurchased($orderId);
-            $this->glamiPixelPurchased($orderId);
-            $this->glamiTOP($orderId);
             $this->adWordsConversions($orderId);
-            $this->sklikConversions($orderId);
+
+            if(CookieClass::advertismentEnabled()) {
+                HeurekaService::heurekaOrderConfirmation($orderId);
+                $this->glamiTOP($orderId);
+                $this->kelkooServiceIntegration->kelkooPurchase($orderId);
+                $this->bianoPurchased($orderId);
+            }
+
+            $this->glamiPixelPurchased($orderId);
             $this->zboziConversions($orderId);
-            $this->kelkooPurchase($orderId);
-            $this->bianoPurchased($orderId);
+            $this->sklikConversions($orderId); // GDPR got custom integration in platform
             $this->gtagjsPurchased($orderId);
         }
     }
@@ -1294,9 +1365,9 @@ class Mergado_Marketing_Pack
     {
         $order = wc_get_order($order_id);
 
-        $active = $this->googleAdsClass->isConversionActive();
-        $code = $this->googleAdsClass->getConversionCode();
-        $label = $this->googleAdsClass->getConversionLabel();
+        $active = $this->googleAdsService->isConversionActive();
+        $code = $this->googleAdsService->getConversionCode();
+        $label = $this->googleAdsService->getConversionLabel();
 
         $currency = get_woocommerce_currency();
         $orderTotal = $order->get_total();
@@ -1324,8 +1395,8 @@ class Mergado_Marketing_Pack
     {
         $lang = Languages::getLang();
 
-        $active = $this->glamiPixelClass->isActive($lang);
-	    $withVat = $this->glamiPixelClass->getConversionVatIncluded();
+        $active = $this->glamiPixelService->isActive($lang);
+	    $withVat = $this->glamiPixelService->getConversionVatIncluded();
 
         if ($active) {
             $order = wc_get_order($orderId);
@@ -1351,13 +1422,14 @@ class Mergado_Marketing_Pack
 
             ?>
             <script>
-                document.addEventListener("DOMContentLoaded", function (event) {
+                window.addEventListener("load", function (event) {
                     glami('track', 'Purchase', {
                         item_ids: [<?php echo implode(',', $products['ids']); ?>],
                         product_names: [<?php echo implode(',', $products['name']); ?>],
                         value: <?php echo $conversionValue ?>,
                         currency: '<?php echo get_woocommerce_currency(); ?>',
-                        transaction_id: '<?php echo $orderId; ?>'
+                        transaction_id: '<?php echo $orderId; ?>',
+                        consent: window.mmp.cookies.sections.advertisement.onloadStatus,
                     });
                 });
             </script>
@@ -1368,9 +1440,9 @@ class Mergado_Marketing_Pack
 
     public function fbPixelPurchased($orderId)
     {
-        $active = $this->facebookClass->isActive();
+        $active = $this->facebookService->isActive();
         $currency = get_woocommerce_currency();
-	    $fbWithVat = $this->facebookClass->getConversionVatIncluded();
+	    $fbWithVat = $this->facebookService->getConversionVatIncluded();
 
         if ($active) {
             $order = wc_get_order($orderId);
@@ -1434,6 +1506,14 @@ class Mergado_Marketing_Pack
             <script type="text/javascript">
                 var seznam_cId = <?php echo $conversionCode ?>;
                 var seznam_value = <?php echo $conversionValue ?>;
+                var rc = rc || {};
+
+                <?php if (CookieClass::advertismentEnabled()): ?>
+                    rc.consent = 1; // CCC = 0 nebo 1
+                <?php else: ?>
+                    rc.consent = 0; // CCC = 0 nebo 1
+                <?php endif; ?>
+
             </script>
             <script type="text/javascript" src="https://www.seznam.cz/rs/static/rc.js" async></script>
             <?php
@@ -1444,7 +1524,7 @@ class Mergado_Marketing_Pack
     public function glamiPixel()
     {
         $lang = Languages::getLang();
-        $active = $this->glamiPixelClass->isActive($lang);
+        $active = $this->glamiPixelService->isActive($lang);
 
         if ($active) {
 
@@ -1475,7 +1555,8 @@ class Mergado_Marketing_Pack
                         item_ids: [<?php echo implode(',', $products['ids']); ?>],
                         product_names: [<?php echo implode(',', $products['name']); ?>],
                         category_id: '<?php echo $category->term_id; ?>',
-                        category_text: '<?php echo $category->name; ?>'
+                        category_text: '<?php echo $category->name; ?>',
+                        consent: window.mmp.cookies.sections.advertisement.onloadStatus,
                     });
                 });
                 <?php endif; ?>
@@ -1500,6 +1581,7 @@ class Mergado_Marketing_Pack
                         content_type: 'product',
                         item_ids: ['<?php echo $id; ?>'],
                         product_names: ['<?php echo $product->post_title; ?>'],
+                        consent: window.mmp.cookies.sections.advertisement.onloadStatus,
                     });
                 });
                 <?php endif; ?>
@@ -1517,10 +1599,10 @@ class Mergado_Marketing_Pack
         $ecommerce = get_option(Settings::GOOGLE_GTAGJS['ECOMMERCE']);
         $ecommerceEnhanced = get_option(Settings::GOOGLE_GTAGJS['ECOMMERCE_ENHANCED']);
 
-        $googleAdsRemarketingActive = $this->googleAdsClass->isRemarketingActive();
+        $googleAdsRemarketingActive = $this->googleAdsService->isRemarketingActive();
 
-        if(($active == 1 && $tracking == 1 && $code != '' && $ecommerce == 1 && $ecommerceEnhanced == 1) || $googleAdsRemarketingActive):
-            $sendTo = implode(',', [$code, $this->googleAdsClass->getConversionCode()]);
+        if(($active == 1 && $tracking == 1 && $code != '' && $ecommerce == 1 && $ecommerceEnhanced == 1) || ($googleAdsRemarketingActive)):
+            $sendTo = implode(',', [$code, $this->googleAdsService->getConversionCode()]);
 
             if(is_product()):
 //                $productID = get_queried_object_id();
@@ -1595,8 +1677,8 @@ class Mergado_Marketing_Pack
     public function googleTagManagerProductDetailView()
     {
         if(is_product()):
-            $active = $this->googleTagManagerClass->isActive();
-            $enhancedEcommerceActive = $this->googleTagManagerClass->isEnhancedEcommerceActive();
+            $active = $this->googleTagManagerService->isActive();
+            $enhancedEcommerceActive = $this->googleTagManagerService->isEnhancedEcommerceActive();
 
             if($active && $enhancedEcommerceActive):
     //                $productID = get_queried_object_id();
@@ -1688,7 +1770,7 @@ class Mergado_Marketing_Pack
             }
 
             if ($checkboxText === 0 || trim($checkboxText) === '') {
-                $checkboxText = HeurekaClass::DEFAULT_OPT;
+                $checkboxText = HeurekaService::DEFAULT_OPT;
             }
 
             woocommerce_form_field( 'heureka-verify-checkbox', array( // CSS ID
@@ -1705,7 +1787,7 @@ class Mergado_Marketing_Pack
     // Add checkbox if user want customer review email
     public function zboziAddCheckboxVerifyOptIn()
     {
-        $ZboziClass = new ZboziClass();
+        $ZboziClass = new ZboziService();
 
         if ($ZboziClass->isActive()) {
             $lang = get_locale();
@@ -1718,7 +1800,7 @@ class Mergado_Marketing_Pack
             }
 
             if ($checkboxText === 0 || trim($checkboxText) === '') {
-                $checkboxText = ZboziClass::DEFAULT_OPT;
+                $checkboxText = ZboziService::DEFAULT_OPT;
             }
 
             woocommerce_form_field( 'zbozi-verify-checkbox', array( // CSS ID
@@ -1736,17 +1818,17 @@ class Mergado_Marketing_Pack
     // Add checkbox if user want customer review email
     public function arukeresoAddCheckboxVerifyOptOut()
     {
-        if ($this->arukeresoClass->isActive()) {
+        if ($this->arukeresoService->isActive()) {
             $lang = get_locale();
-            $defaultText = stripslashes($this->arukeresoClass->getOptOut('en_US'));
-            $checkboxText = stripslashes($this->arukeresoClass->getOptOut($lang));
+            $defaultText = stripslashes($this->arukeresoService->getOptOut('en_US'));
+            $checkboxText = stripslashes($this->arukeresoService->getOptOut($lang));
 
             if ($checkboxText === 0 || trim($checkboxText) === '') {
                 $checkboxText = $defaultText;
             }
 
             if ($checkboxText === 0 || trim($checkboxText) === '') {
-                $checkboxText = ArukeresoClass::DEFAULT_OPT;
+                $checkboxText = ArukeresoService::DEFAULT_OPT;
             }
 
             woocommerce_form_field( 'arukereso-verify-checkbox', array( // CSS ID
@@ -1764,7 +1846,7 @@ class Mergado_Marketing_Pack
     // Set to order meta if user want heureka review email
     public function heurekaSetOrderMetaData($orderId)
     {
-        if ($_POST['heureka-verify-checkbox']){
+        if (isset($_POST['heureka-verify-checkbox']) && $_POST['heureka-verify-checkbox']){
             update_post_meta( $orderId, 'heureka-verify-checkbox', esc_attr($_POST['heureka-verify-checkbox']));
         }
     }
@@ -1772,7 +1854,7 @@ class Mergado_Marketing_Pack
     // Set to order meta if user want zbozi review email
     public function zboziSetOrderMetaData($orderId)
     {
-        if ($_POST['zbozi-verify-checkbox']){
+        if (isset($_POST['zbozi-verify-checkbox']) && $_POST['zbozi-verify-checkbox']){
             update_post_meta( $orderId, 'zbozi-verify-checkbox', esc_attr($_POST['zbozi-verify-checkbox']));
         }
     }
@@ -1780,15 +1862,18 @@ class Mergado_Marketing_Pack
     // Set to order meta if user want zbozi review email
     public function arukeresoSetOrderMetaData($orderId)
     {
-        if ($_POST['arukereso-verify-checkbox']){
+        if (isset($_POST['arukereso-verify-checkbox']) && $_POST['arukereso-verify-checkbox']){
             update_post_meta( $orderId, 'arukereso-verify-checkbox', esc_attr($_POST['arukereso-verify-checkbox']));
         }
     }
 
     public function mergadoHeaderSetup()
     {
+        $this->createJsVariables();
+
         $this->bianoHeader();
-        $this->gtagjsHeader();
+
+        $this->gtagjsHeader(); // GDPR resolved inside
 
         $this->googleTagManagerInitDataLayer();
         $this->googleTagManagerProductDetailView(); // must be before GTM
@@ -1811,6 +1896,18 @@ class Mergado_Marketing_Pack
 
     public function gtagjsHeader()
     {
+        if(CookieClass::analyticalEnabled()) {
+            $analyticalStorage = 'granted';
+        } else {
+            $analyticalStorage = 'denied';
+        }
+
+        if (CookieClass::advertismentEnabled()) {
+            $advertisementStorage = 'granted';
+        } else {
+            $advertisementStorage = 'denied';
+        }
+
         //Gtagjs - GA
         $gtagActive = get_option(Settings::GOOGLE_GTAGJS['ACTIVE']);
         $gtagTracking = get_option(Settings::GOOGLE_GTAGJS['TRACKING']);
@@ -1819,8 +1916,8 @@ class Mergado_Marketing_Pack
         $gtagMainCode = '';
 
         //Google ADS
-        $googleAdsConversionsActive = $this->googleAdsClass->isConversionActive();
-        $googleAdsRemarketingActive = $this->googleAdsClass->isRemarketingActive();
+        $googleAdsConversionsActive = $this->googleAdsService->isConversionActive();
+        $googleAdsRemarketingActive = $this->googleAdsService->isRemarketingActive();
 
         //Primarily use code for anayltics so no need for config on all functions
         if ($gtagActive == 1 && $gtagTracking == 1 && $gaMeasurementId !== '') {
@@ -1828,10 +1925,10 @@ class Mergado_Marketing_Pack
             $gtagAnalyticsCode = $gaMeasurementId;
         }
 
-        if ($googleAdsRemarketingActive || $googleAdsConversionsActive) {
-            $googleAdsConversionCode = $this->googleAdsClass->getConversionCode();
+        if ( $googleAdsRemarketingActive || $googleAdsConversionsActive ) {
+            $googleAdsConversionCode = $this->googleAdsService->getConversionCode();
 
-            if ($gtagMainCode == '') {
+            if ( $gtagMainCode == '' ) {
                 $gtagMainCode = $googleAdsConversionCode;
             }
         }
@@ -1846,25 +1943,49 @@ class Mergado_Marketing_Pack
                     function gtag(){dataLayer.push(arguments);}
                         gtag('js', new Date());
 
-                    <?php if (isset($gtagAnalyticsCode)): ?>
-                        gtag('config', '<?= $gtagAnalyticsCode ?>');
-                    <?php endif ?>
+                        gtag('consent', 'default', {
+                          'analytics_storage': '<?php echo $analyticalStorage ?>',
+                          'ad_storage': '<?php echo $advertisementStorage ?>',
+                        });
+
+                        <?php if (isset($gtagAnalyticsCode)): ?>
+                            gtag('config', '<?= $gtagAnalyticsCode ?>');
+
+                            window.mmp.cookies.sections.analytical.functions.gtagAnalytics = function () {
+                                gtag('consent', 'update', {
+                                  'analytics_storage': 'granted'
+                                });
+                            };
+                        <?php endif; ?>
 
                     <?php if (isset($googleAdsConversionCode) && $googleAdsRemarketingActive): ?>
-                        gtag('config', '<?= $googleAdsConversionCode ?>');
+                        <?php if(CookieClass::advertismentEnabled()): ?>
+                            gtag('config', '<?= $googleAdsConversionCode ?>');
+                        <?php else: ?>
+                            gtag('config', '<?= $googleAdsConversionCode ?>', {'allow_ad_personalization_signals': false});
+                        <?php endif; ?>
                     <?php elseif (isset($googleAdsConversionCode)): ?>
-                        gtag('config', '<?= $googleAdsConversionCode ?>',{'allow_ad_personalization_signals': false});
-                    <?php endif ?>
+                            gtag('config', '<?= $googleAdsConversionCode ?>', {'allow_ad_personalization_signals': false});
+                    <?php endif; ?>
+
+                    <?php if (isset($googleAdsConversionCode)): ?>
+                        window.mmp.cookies.sections.advertisement.functions.gtagAds = function () {
+                          gtag('consent', 'update', {
+                            'ad_storage': 'granted'
+                          });
+
+                          gtag('config', '<?= $googleAdsConversionCode ?>', {'allow_ad_personalization_signals': true});
+                        };
+                    <?php endif; ?>
                   // });
                 </script>
-            <?php
-        endif;
+        <?php endif;
     }
 
     public function googleTagManagerHeader()
     {
-        $active = $this->googleTagManagerClass->isActive();
-        $code = $this->googleTagManagerClass->getCode();
+        $active = $this->googleTagManagerService->isActive();
+        $code = $this->googleTagManagerService->getCode();
 
         if($active):
             ?>
@@ -1881,8 +2002,8 @@ class Mergado_Marketing_Pack
 
     public function googleTagManagerAfterBody()
     {
-        $active = $this->googleTagManagerClass->isActive();
-        $code = $this->googleTagManagerClass->getCode();
+        $active = $this->googleTagManagerService->isActive();
+        $code = $this->googleTagManagerService->getCode();
 
         if($active):
             ?>
@@ -1974,9 +2095,9 @@ class Mergado_Marketing_Pack
                 $orderId = $orderId_filter;
             }
 
-            $active = $this->googleTagManagerClass->isActive();
-            $ecommerceActive = $this->googleTagManagerClass->isEcommerceActive();
-            $conversionVatIncluded = $this->googleTagManagerClass->getConversionVatIncluded();
+            $active = $this->googleTagManagerService->isActive();
+            $ecommerceActive = $this->googleTagManagerService->isEcommerceActive();
+            $conversionVatIncluded = $this->googleTagManagerService->getConversionVatIncluded();
 
             if($active && $ecommerceActive):
                 $order = wc_get_order($orderId);
@@ -2046,9 +2167,9 @@ class Mergado_Marketing_Pack
 
             global $woocommerce;
 
-            $active = $this->googleTagManagerClass->isActive();
-            $enhancedEcommerceActive = $this->googleTagManagerClass->isEnhancedEcommerceActive();
-            $conversionVatIncluded = $this->googleTagManagerClass->getConversionVatIncluded();
+            $active = $this->googleTagManagerService->isActive();
+            $enhancedEcommerceActive = $this->googleTagManagerService->isEnhancedEcommerceActive();
+            $conversionVatIncluded = $this->googleTagManagerService->getConversionVatIncluded();
 
             if($active && $enhancedEcommerceActive):
                 $order = wc_get_order($orderId);
@@ -2129,10 +2250,10 @@ class Mergado_Marketing_Pack
         $ecommerce = get_option(Settings::GOOGLE_GTAGJS['ECOMMERCE']);
         $ecommerceEnhanced = get_option(Settings::GOOGLE_GTAGJS['ECOMMERCE_ENHANCED']);
 
-        $googleAdsRemarketingActive = $this->googleAdsClass->isRemarketingActive();
+        $googleAdsRemarketingActive = $this->googleAdsService->isRemarketingActive();
 
-        if (($active == 1 && $tracking == 1 && $code != '' && $ecommerce == 1 && $ecommerceEnhanced == 1) || $googleAdsRemarketingActive):
-            $sendTo = implode(',', [$code, $this->googleAdsClass->getConversionCode()]);
+        if (($active == 1 && $tracking == 1 && $code != '' && $ecommerce == 1 && $ecommerceEnhanced == 1) || ($googleAdsRemarketingActive)):
+            $sendTo = implode(',', [$code, $this->googleAdsService->getConversionCode()]);
 
             if (isset($_POST['add-to-cart'])):
                 $product = wc_get_product($_POST['add-to-cart']);
@@ -2235,8 +2356,8 @@ class Mergado_Marketing_Pack
             return false;
         }
 
-        $active = $this->googleTagManagerClass->isActive();
-        $enhancedEcommerceActive = $this->googleTagManagerClass->isEnhancedEcommerceActive();
+        $active = $this->googleTagManagerService->isActive();
+        $enhancedEcommerceActive = $this->googleTagManagerService->isEnhancedEcommerceActive();
 
         if($active && $enhancedEcommerceActive):
             if (isset($_POST['add-to-cart'])):
@@ -2336,10 +2457,10 @@ class Mergado_Marketing_Pack
         $ecommerce = get_option(Settings::GOOGLE_GTAGJS['ECOMMERCE']);
         $ecommerceEnhanced = get_option(Settings::GOOGLE_GTAGJS['ECOMMERCE_ENHANCED']);
 
-        $googleAdsRemarketingActive = $this->googleAdsClass->isRemarketingActive();
+        $googleAdsRemarketingActive = $this->googleAdsService->isRemarketingActive();
 
-        if(($active == 1 && $tracking == 1 && $code != '' && $ecommerce == 1 && $ecommerceEnhanced == 1) || $googleAdsRemarketingActive):
-            $sendTo = implode(',', [$code, $this->googleAdsClass->getConversionCode()]);
+        if(($active == 1 && $tracking == 1 && $code != '' && $ecommerce == 1 && $ecommerceEnhanced == 1) || ($googleAdsRemarketingActive)):
+            $sendTo = implode(',', [$code, $this->googleAdsService->getConversionCode()]);
             ?>
             <script>
                 document.addEventListener("DOMContentLoaded", function () {
@@ -2381,8 +2502,8 @@ class Mergado_Marketing_Pack
     public function googleTagManagerAddToCartAjax()
     {
 
-        $active = $this->googleTagManagerClass->isActive();
-        $enhancedEcommerceActive = $this->googleTagManagerClass->isEnhancedEcommerceActive();
+        $active = $this->googleTagManagerService->isActive();
+        $enhancedEcommerceActive = $this->googleTagManagerService->isEnhancedEcommerceActive();
 
         if($active && $enhancedEcommerceActive):
             ?>
@@ -2489,8 +2610,8 @@ class Mergado_Marketing_Pack
 
     public function googleTagManagerRemoveFromCartAjax()
     {
-        $active = $this->googleTagManagerClass->isActive();
-        $enhancedEcommerceActive = $this->googleTagManagerClass->isEnhancedEcommerceActive();
+        $active = $this->googleTagManagerService->isActive();
+        $enhancedEcommerceActive = $this->googleTagManagerService->isEnhancedEcommerceActive();
 
         if($active && $enhancedEcommerceActive):
             global $woocommerce;
@@ -2561,33 +2682,77 @@ class Mergado_Marketing_Pack
         $bianoMerchantId = get_option(Settings::BIANO['MERCHANT_ID'] . '-' . $lang);
 
         if ($bianoActive == '1' && $bianoLanguageActive == '1' && $bianoMerchantId && $bianoMerchantId !== ''):
-            if (in_array($lang, Settings::BIANO['LANG_OPTIONS'])):?>
-                <!-- Biano Pixel Code -->
-                <script>
-                    var merchantId = '<?= $bianoMerchantId ?>';
-                    !function(b,i,a,n,o,p,x)
-                    {if(b.bianoTrack)return;o=b.bianoTrack=function(){o.callMethod?
-                        o.callMethod.apply(o,arguments):o.queue.push(arguments)};
-                        o.push=o;o.queue=[];p=i.createElement(a);p.async=!0;p.src=n;
-                        x=i.getElementsByTagName(a)[0];x.parentNode.insertBefore(p,x)
-                     }(window,document,'script','https://pixel.biano.<?=strtolower($lang)?>/min/pixel.js');
-                     //}(window,document,'script','https://pixel.biano.<?=strtolower($lang)?>/debug/pixel.js'); // Debug
-                    bianoTrack('init', merchantId);
-                </script>
-                <!-- End Biano Pixel Code -->
-            <?php else: ?>
-                <script>
-                    !function(b,i,a,n,o,p,x) {if(b.bianoTrack)return;o=b.bianoTrack=function(){ o.queue.push(arguments)};o.push=o;o.queue=[]; }(window,document);
-                </script>
-            <?php endif ?>
+            if (in_array($lang, Settings::BIANO['LANG_OPTIONS'])):
+                if (CookieClass::advertismentEnabled()): ?>
+                    <!-- Biano Pixel Code -->
+                    <script>
+                        var merchantId = '<?= $bianoMerchantId ?>';
+                        !function(b,i,a,n,o,p,x)
+                        {if(b.bianoTrack)return;o=b.bianoTrack=function(){o.callMethod?
+                            o.callMethod.apply(o,arguments):o.queue.push(arguments)};
+                            o.push=o;o.queue=[];p=i.createElement(a);p.async=!0;p.src=n;
+                            x=i.getElementsByTagName(a)[0];x.parentNode.insertBefore(p,x)
+                         }(window,document,'script','https://pixel.biano.<?=strtolower($lang)?>/min/pixel.js');
+                         //}(window,document,'script','https://pixel.biano.<?=strtolower($lang)?>/debug/pixel.js'); // Debug
+                        bianoTrack('init', merchantId);
 
-            <script>
-                <?php if(is_product()): ?>
-                bianoTrack('track', 'product_view', {id: '<?=wc_get_product()->get_id(); ?>'});
+                        <?php if(is_product()): ?>
+                            bianoTrack('track', 'product_view', {id: '<?=wc_get_product()->get_id(); ?>'});
+                        <?php else: ?>
+                            bianoTrack('track', 'page_view');
+                        <?php endif ?>
+                    </script>
+                    <!-- End Biano Pixel Code -->
                 <?php else: ?>
-                bianoTrack('track', 'page_view');
-                <?php endif ?>
-            </script>
+                    <script>
+                        window.mmp.cookies.sections.advertisement.functions.bianoPixel = function () {
+
+                            <!-- Biano Pixel Code -->
+                                var merchantId = '<?= $bianoMerchantId ?>';
+                                !function(b,i,a,n,o,p,x)
+                                {if(b.bianoTrack)return;o=b.bianoTrack=function(){o.callMethod?
+                                    o.callMethod.apply(o,arguments):o.queue.push(arguments)};
+                                    o.push=o;o.queue=[];p=i.createElement(a);p.async=!0;p.src=n;
+                                    x=i.getElementsByTagName(a)[0];x.parentNode.insertBefore(p,x)
+                                }(window,document,'script','https://pixel.biano.<?=strtolower($lang)?>/min/pixel.js');
+                                //}(window,document,'script','https://pixel.biano.<?=strtolower($lang)?>/debug/pixel.js'); // Debug
+                                bianoTrack('init', merchantId);
+                            <!-- End Biano Pixel Code -->
+
+	                        <?php if(is_product()): ?>
+                                bianoTrack('track', 'product_view', {id: '<?=wc_get_product()->get_id(); ?>'});
+	                        <?php else: ?>
+                                bianoTrack('track', 'page_view');
+	                        <?php endif ?>
+                        };
+                    </script>
+                <?php endif; ?>
+            <?php else:
+	            if (CookieClass::advertismentEnabled()): ?>
+                    <script>
+                        !function(b,i,a,n,o,p,x) {if(b.bianoTrack)return;o=b.bianoTrack=function(){ o.queue.push(arguments)};o.push=o;o.queue=[]; }(window,document);
+
+                        <?php if(is_product()): ?>
+                            bianoTrack('track', 'product_view', {id: '<?=wc_get_product()->get_id(); ?>'});
+                        <?php else: ?>
+                            bianoTrack('track', 'page_view');
+                        <?php endif ?>
+                    </script>
+                <?php else: ?>
+                    <script>
+                        window.mmp.cookies.sections.advertisement.functions.bianoPixel = function () {
+
+                            !function(b,i,a,n,o,p,x) {if(b.bianoTrack)return;o=b.bianoTrack=function(){ o.queue.push(arguments)};o.push=o;o.queue=[]; }(window,document);
+
+                            <?php if(is_product()): ?>
+                                bianoTrack('track', 'product_view', {id: '<?=wc_get_product()->get_id(); ?>'});
+                            <?php else: ?>
+                                bianoTrack('track', 'page_view');
+                            <?php endif ?>
+                        };
+                    </script>
+                <?php endif; ?>
+            <?php endif ?>
         <?php endif;
     }
 
@@ -2599,6 +2764,7 @@ class Mergado_Marketing_Pack
         if ($bianoActive == '1'):
                 $order = wc_get_order($orderId);
                 $products_tmp = $order->get_items();
+                $email = $order->get_billing_email();
 
                 //Set prices with or without vat
                 // Specification looks that `quantity * unit_price` should be order_total
@@ -2635,10 +2801,11 @@ class Mergado_Marketing_Pack
                 ?>
                 <script>
                     bianoTrack('track', 'purchase', {
-                        id: '<?= $orderId ?>',
-                        order_price: <?= (float)$orderPrice ?>,
-                        currency: '<?= $order->get_currency() ?>',
-                        items: <?= json_encode($products) ?>});
+                        id: '<?php echo $orderId ?>',
+                        customer_email: '<?php echo $email; ?>,
+                        order_price: <?php echo (float)$orderPrice ?>,
+                        currency: '<?php echo $order->get_currency() ?>',
+                        items: <?php echo json_encode($products) ?>});
                 </script>
             <?php
         endif;
@@ -2649,12 +2816,13 @@ class Mergado_Marketing_Pack
         $lang = Languages::getLang();
         $langISO = Languages::getLangIso();
 
-        $active = $this->glamiTopClass->isActive();
-        $selection = $this->glamiTopClass->getSelection();
-        $domain = $selection['name'];
-        $code = $this->glamiTopClass->getCode();
+        $active = $this->glamiTopService->isActive();
+        $selection = $this->glamiTopService->getSelection();
+        $code = $this->glamiTopService->getCode();
 
-        if ($active) {
+        if ($active && $selection) {
+            $domain = $selection['name'];
+
             $order = wc_get_order($orderId);
             $products_tmp = $order->get_items();
 
@@ -2696,13 +2864,15 @@ class Mergado_Marketing_Pack
 
     private function zboziConversions($orderId)
     {
-        $ZboziClass = new ZboziClass();
+        $ZboziClass = new ZboziService();
 
         if ($ZboziClass->isActive()):
+
             echo '<script>
             var conversionOrderId = ' . $orderId . ';
             var conversionZboziShopId = ' . $ZboziClass->getId() . ';
-            var useSandbox = ' . (int) ZboziClass::ZBOZI_SANDBOX . ';
+            var useSandbox = ' . (int) ZboziService::ZBOZI_SANDBOX . ';
+            var consent = ' . (int)CookieClass::advertismentEnabled() . ';
     
             // Set cookie to prevent sending same order for zbozi.cz multiple times
             function setCookie(cname, cvalue, exdays) {
@@ -2758,6 +2928,7 @@ class Mergado_Marketing_Pack
         
                         zbozi("setOrder", {
                             "orderId": conversionOrderId,
+                            "consent": consent
                         });
         
                         zbozi("send");
@@ -2785,7 +2956,8 @@ class Mergado_Marketing_Pack
                         }
         
                         zbozi("setOrder", {
-                            "orderId": conversionOrderId
+                            "orderId": conversionOrderId,
+                            "consent": consent
                         });
         
                         zbozi("send");
@@ -2796,82 +2968,15 @@ class Mergado_Marketing_Pack
         endif;
     }
 
-    private function kelkooPurchase($orderId) {
-        $kelkooActive = get_option(Settings::KELKOO['ACTIVE'], 0);;
-        $kelkooCountry = KelkooClass::getKelkooActiveDomain();;
-        $kelkooComId = get_option(Settings::KELKOO['COM_ID']);;
-	    $kelkooWithVat = get_option(Settings::KELKOO['CONVERSION_VAT_INCL'], 0);
-
-        if($kelkooActive == 1 && $kelkooCountry && $kelkooCountry !== '' && $kelkooComId !== '') {
-            $order = wc_get_order($orderId);
-            $products_tmp = $order->get_items();
-
-	        $productsKelkoo = [];
-
-	        //Set prices with or without vat
-	        if ($kelkooWithVat == 1) {
-		        $orderPrice = number_format( (float) $order->get_total() - $order->get_shipping_total() - $order->get_shipping_tax(), wc_get_price_decimals(), '.', '' );
-	        } else {
-		        $orderPrice = number_format( (float) $order->get_total() - $order->get_total_tax() - $order->get_shipping_total(), wc_get_price_decimals(), '.', '' );
-	        }
-
-            foreach ($products_tmp as $item) {
-                if ($item->get_variation_id() == 0) {
-                    $prodId = $item->get_data()['product_id'];
-                } else {
-                    $prodId = $item->get_data()['product_id'] . '-' . $item->get_variation_id();
-                }
-
-                $prodName = $item->get_name();
-
-	            //Set prices with or without vat
-	            if ($kelkooWithVat == 1) {
-		            $unitPrice = (float) ($item->get_total() + $item->get_total_tax());
-	            } else {
-		            $unitPrice = (float) $item->get_total();
-	            }
-
-                $productsKelkoo[] = [
-                    'productname' => $prodName,
-                    'productid' => $prodId,
-                    'quantity' => $item->get_quantity(),
-                    'price' => $unitPrice,
-                ];
-            }
-
-            $productsKelkoo = json_encode($productsKelkoo);
-            echo "<script type='text/javascript'>
-                var kelkooCountry = '$kelkooCountry';
-                var kelkooComId = $kelkooComId;
-
-                _kkstrack = {
-                  merchantInfo: [{ country:kelkooCountry, merchantId:kelkooComId }],
-                  orderValue: '$orderPrice',
-                  orderId: '$orderId',
-                  basket: '$productsKelkoo'
-                };
-            
-                (function() {
-                  var s = document.createElement('script');
-                  s.type = 'text/javascript';
-                  s.async = true;
-                  s.src = 'https://s.kk-resources.com/ks.js';
-                  var x = document.getElementsByTagName('script')[0];
-                  x.parentNode.insertBefore(s, x);
-                })();
-             </script>";
-        }
-    }
-
     /*******************************************************************************************************************
      * FOOTER SETUP - SKLIK, ADWORDS, ETARGET
      *******************************************************************************************************************/
 
-    public function data()
+    public function glamiData()
     {
         $lang = Languages::getLang();
-        $active = $this->glamiPixelClass->isActive($lang);
-        $code = $this->glamiPixelClass->getCode($lang);
+        $active = $this->glamiPixelService->isActive($lang);
+        $code = $this->glamiPixelService->getCode($lang);
 
         if($active) {
         ?>
@@ -2887,7 +2992,7 @@ class Mergado_Marketing_Pack
 
     public function mergadoFooterSetup($orderId)
     {
-        $googleReviewsClass = new GoogleReviewsClass();
+        $googleReviewsClass = new GoogleReviewsService();
 
         echo '<div id="mergadoSetup" data-currency="' . get_woocommerce_currency() . '"></div>';
 
@@ -2896,41 +3001,50 @@ class Mergado_Marketing_Pack
             $this->googleTagManagerAfterBody();
         }
 
-        $this->fbPixel($orderId);
+        $this->fbPixel( $orderId ); // GDPR managed inside own logic
+        $this->fbPixelAddToCartAjax();
+
+	    if (CookieClass::advertismentEnabled()) {
+		    $this->etargetServiceIntegration->etargetRetarget();
+		    $this->bianoAddToCartAjax();
+	    }
+
         $this->glamiPixel();
         $this->sklikRetargeting();
-        $this->etarget();
-        HeurekaClass::heurekaWidget();
+
         $googleReviewsClass->getBadgeTemplate();
-        $this->fbPixelAddToCartAjax();
-        $this->bianoAddToCartAjax();
-        $this->gtagjsAddToCartAjax();
+        HeurekaService::heurekaWidget();
+        $this->arukeresoService->getWidgetTemplate();
+
         $this->gtagjsRemoveFromCartAjax();
+
         $this->googleTagManagerRemoveFromCartAjax();
         $this->googleTagManagerAddToCartAjax();
-        $this->arukeresoClass->getWidgetTemplate();
 
+        $this->gtagjsAddToCartAjax(); // GDPR resolved inside
 
-        // Code for glami.js
-        $lang = Languages::getLang();
+	    if (CookieClass::advertismentEnabled()) {
+            // Code for glami.js
+            $lang = Languages::getLang();
 
-        if($lang == 'CS') {
-            $lang = 'CZ';
-        }
+            if($lang == 'CS') {
+                $lang = 'CZ';
+            }
 
-        $active = $this->glamiPixelClass->isActive($lang);
-        $code = $this->glamiPixelClass->getCode($lang);
+            $active = $this->glamiPixelService->isActive($lang);
+            $code = $this->glamiPixelService->getCode($lang);
 
-        if ($active) {
-        ?>
+            if ($active) {
+            ?>
 
-        <script>
-            var __glamiActive = <?= (int) $active ?>;
-            var __glamiCode = '<?= $code ?>';
-            var __lang = '<?= strtolower($lang) ?>';
-        </script>
-        <?php
-        }
+            <script>
+                var __glamiActive = <?= (int) $active ?>;
+                var __glamiCode = '<?= $code ?>';
+                var __lang = '<?= strtolower($lang) ?>';
+            </script>
+            <?php
+            }
+	    }
 
         //Method that need to be called later (because of initializing their object)
         echo $this->headerExtra;
@@ -2942,49 +3056,28 @@ class Mergado_Marketing_Pack
         $sklikRetargeting = get_option(Settings::SKLIK['RETARGETING_ID']);
 
         if ($sklikActive != 0 && $sklikRetargeting != '') {
-
             echo '<div id="sklikRetargeting">
             <script type="text/javascript">
             /* <![CDATA[ */
             var seznam_retargeting_id = ' . $sklikRetargeting . '
+            var rc = rc || {};
+            rc.consent = ' . (int) CookieClass::advertismentEnabled() . '; // CCC = 0 nebo 1
             /* ]]> */
             </script>
             <script type="text/javascript" src="//c.imedia.cz/js/retargeting.js"></script></div>';
+
+            echo '<script>
+                window.mmp.cookies.sections.advertisement.functions.sklikRetargeting = function () {
+                  rc.consent = 1;
+                };
+            </script>';
         }
     }
-
-    private function etarget()
-    {
-        $etargetActive = get_option(Settings::ETARGET['ACTIVE']);
-        $etargetID = get_option(Settings::ETARGET['ID']);
-        $etargetHash = get_option(Settings::ETARGET['HASH']);
-
-        if ($etargetActive != 0 && $etargetID != '' && $etargetHash != '') {
-            echo '<div id="etargetMergado">
-                    <script type="text/javascript">
-                        if (window.addEventListener) {
-                            window.addEventListener("load", loadRetarget' . $etargetID . ');
-                        } else if (window.attachEvent) {
-                            window.attachEvent("onload", loadRetarget' . $etargetID . ');
-                        }
-
-                        function loadRetarget' . $etargetID . '() {
-                            var scr = document.createElement("script");
-                            scr.setAttribute("async", "true");
-                            scr.type = "text/javascript";
-                            scr.src = "//" + "cz.search.etargetnet.com/j/?h=' . $etargetHash . '";
-                            ((document.getElementsByTagName("head") || [null])[0] || document.getElementsByTagName("script")[0].parentNode).appendChild(scr);
-                        }
-                </script>
-                ';
-        }
-    }
-
 
     private function fbPixel($orderId)
     {
-        $active = $this->facebookClass->isActive();
-        $code = $this->facebookClass->getCode();
+        $active = $this->facebookService->isActive();
+        $code = $this->facebookService->getCode();
 
         if ($active) {
             ?>
@@ -3010,6 +3103,18 @@ class Mergado_Marketing_Pack
                     s.parentNode.insertBefore(t, s)
                 }(window,
                     document, 'script', '//connect.facebook.net/en_US/fbevents.js');
+
+                <?php if(CookieClass::advertismentEnabled()): ?>
+                    fbq('consent', 'grant');
+                <?php else: ?>
+                    fbq('consent', 'revoke');
+                <?php endif; ?>
+
+                window.mmp.cookies.sections.advertisement.functions.fbpixel = function () {
+                  fbq('consent', 'grant');
+                  fbq('track', 'PageView');
+                };
+
                 fbq('init', '<?= $code; ?>');
                 fbq('track', 'PageView');
 
@@ -3086,6 +3191,18 @@ class Mergado_Marketing_Pack
             <?php
 
         }
+    }
+
+    public function createJsVariables()
+    {
+        // Basic wrapper
+        ?>
+        <script type="text/javascript">
+            window.mmp = {};
+        </script>
+        <?php
+
+        CookieClass::createJsVariables();
     }
 
     public function getFormattedAdsCode($code)

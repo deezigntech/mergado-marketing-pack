@@ -102,8 +102,6 @@ class XMLProductFeed
                     exit;
                 }
 
-				wp_schedule_single_event(time(), 'wp-cron-product-feed-hook');
-				
                 return 'stepGenerated';
             // Common generating
             } elseif ($this->isNormal($productsPerStep, $productsList)) {
@@ -174,43 +172,48 @@ class XMLProductFeed
             $productObject = wc_get_product($v['id']);
             $parentId = wc_get_product($v['id'])->get_parent_id();
 
-            if( $parentId ){
-                $vParent = XMLClass::getProduct( $parentId );
-            }
+            if (!$this->is_product_type($v['type'], 'variable')) {
+                $posts = $wpdb->get_results($wpdb->prepare("SELECT * FROM $wpdb->posts WHERE ID=%s", $v['id']));
+                if (isset($posts[0])) {
+                    $post = $posts[0];
+                } else {
+                    continue;
+                }
 
-            $posts = $wpdb->get_results($wpdb->prepare("SELECT * FROM $wpdb->posts WHERE ID=%s", $v['id']));
-            if (isset($posts[0])) {
-                $post = $posts[0];
-            } else {
-                continue;
-            }
+                //Product parameters
+                $productAttributes = $productObject->get_attributes();
 
-            $item = $xml->createElement('ITEM');
+                if (isset($products[$parentId])) {
+                    $productParentObject = wc_get_product($parentId);
+                    $parentParams = wc_get_product($parentId)->get_attributes();
+                } else {
+                    $productParentObject = null;
+                    $parentParams = null;
+                }
 
-            $item->appendChild($xml->createElement('ITEM_ID', $v['id']));
+                $params = $this->findParams($productObject, $productAttributes, $productParentObject, $parentParams);
 
-            $product_visibility = $productObject->get_catalog_visibility();
-            $item->appendChild( $xml->createElement('VISIBILITY', $product_visibility ) );
+                $productName = $this->getProductName($v, $productAttributes);
 
-            $stock = $this->getStockStatus($v['stock_status']);
+                $item = $xml->createElement('ITEM');
 
-            $item->appendChild($xml->createElement('AVAILABILITY', $stock));
-            // adresa kde je product
-            $url = get_the_permalink($v['id']);
-            $item->appendChild($xml->createElement('URL', htmlspecialchars($url)));
+                $item->appendChild($xml->createElement('ITEM_ID', $v['id']));
 
-            $item->appendChild($xml->createElement('CURRENCY', $defaults['currency']));
+                $stock = $this->getStockStatus($v['stock_status']);
 
-            if( $this->is_product_type($v['type'], 'variation') ){
-                $v['name'] = $productObject->get_name();
-            }
+                $item->appendChild($xml->createElement('AVAILABILITY', $stock));
 
-            $nameExact = $xml->createElement('NAME_EXACT');
-            $nameExact->appendChild($xml->createCDATASection($v['name']));
-            $item->appendChild($nameExact);
+                // adresa kde je product
+                $url = get_the_permalink($v['id']);
+                $item->appendChild($xml->createElement('URL', htmlspecialchars($url)));
+                
+                $nameExact = $xml->createElement('NAME_EXACT');
+                $nameExact->appendChild($xml->createCDATASection($productName));
+                $item->appendChild($nameExact);
+
+                $item->appendChild($xml->createElement('CURRENCY', $defaults['currency']));
 
 
-            if( ! $this->is_product_type($v['type'], 'variable') ){
                 //PRODUCT PRICES
                 $productTaxClass = $productObject->get_tax_class();
                 $mergadoFeedTaxRate = Settings::getTaxRatesForCountry(get_option(Settings::VAT), $productTaxClass); // Fill in country code from settings
@@ -250,188 +253,185 @@ class XMLProductFeed
                 if ($salePriceEffectiveDate) {
                     $item->appendChild($xml->createElement('SALE_PRICE_EFFECTIVE_DATE', $salePriceEffectiveDate));
                 }
-            }
 
-            //PRODUCT IMAGES
-            $images = null;
-            $hasMainImage = false;
+                //PRODUCT IMAGES
+                $images = null;
+                $hasMainImage = false;
 
-            //Take images from product if exist and assign them
-            if ($v['images'] != "") {
-                $images = $this->findImages($v['images']);
-                $item->appendChild($xml->createElement('IMAGE', $images['main']));
-                $hasMainImage = true;
+                //Take images from product if exist and assign them
+                if ($v['images'] != "") {
+                    $images = $this->findImages($v['images']);
+                    $item->appendChild($xml->createElement('IMAGE', $images['main']));
+                    $hasMainImage = true;
 
-                // Alt for normal
-                if ($images['alt']) {
-                    foreach ($images['alt'] as $img) {
-                        $item->appendChild($xml->createElement('IMAGE_ALTERNATIVE', htmlspecialchars($img)));
-                    }
-                }
-            }
-
-            // If parent product exists, assign images from him to variable (IMAGE_ALTERNATIVE tag if IMAGE already exist)
-            if ($parentId) {
-                $parentImages = $this->getParentImages($parentId);
-
-                if ($parentImages != []) {
-                    if (!$hasMainImage) {
-                        $item->appendChild($xml->createElement('IMAGE', $parentImages[0]));
-                        $hasMainImage = true;
-                    } else {
-                        $item->appendChild($xml->createElement('IMAGE_ALTERNATIVE', $parentImages[0]));
-                    }
-
-                    unset($parentImages[0]);
-
-                    if (count($parentImages) > 0) {
-                        foreach ($parentImages as $img) {
+                    // Alt for normal
+                    if ($images['alt']) {
+                        foreach ($images['alt'] as $img) {
                             $item->appendChild($xml->createElement('IMAGE_ALTERNATIVE', htmlspecialchars($img)));
                         }
                     }
                 }
-            }
 
-            // If not has main image then add placeholder
-            if (!$hasMainImage) {
-                $item->appendChild($xml->createElement('IMAGE', htmlspecialchars(wc_placeholder_img_src('woocommerce_single'))));
-            }
+                // If parent product exists, assign images from him to variable (IMAGE_ALTERNATIVE tag if IMAGE already exist)
+                if ($parentId) {
+                    $parentImages = $this->getParentImages($parentId);
 
-            //Product parameters
-            $productAttributes = $productObject->get_attributes();
+                    if ($parentImages != []) {
+                        if (!$hasMainImage) {
+                            $item->appendChild($xml->createElement('IMAGE', $parentImages[0]));
+                            $hasMainImage = true;
+                        } else {
+                            $item->appendChild($xml->createElement('IMAGE_ALTERNATIVE', $parentImages[0]));
+                        }
 
-            if ($parentId) {
-                $productParentObject = wc_get_product($parentId);
-                $parentParams = wc_get_product($parentId)->get_attributes();
-            } else {
-                $productParentObject = null;
-                $parentParams = null;
-            }
+                        unset($parentImages[0]);
 
-            $params = $this->findParams($productObject, $productAttributes, $productParentObject, $parentParams);
-
-            $params = apply_filters('product_feed_params', $params, $productObject, $productParentObject );
-
-            if ($params !== null) {
-                foreach ($params as $paramKey => $paramValue) {
-                    $xmlParam = $xml->createElement('PARAM');
-
-                    $paramName = $xml->createElement('NAME');
-                    $paramName->appendChild($xml->createCDATASection($paramValue['name']));
-                    $xmlParam->appendChild($paramName);
-
-                    $paramNameValue = $xml->createElement('VALUE');
-                    $paramNameValue->appendChild($xml->createCDATASection($paramValue['value']));
-                    $xmlParam->appendChild($paramNameValue);
-
-                    $item->appendChild($xmlParam);
+                        if (count($parentImages) > 0) {
+                            foreach ($parentImages as $img) {
+                                $item->appendChild($xml->createElement('IMAGE_ALTERNATIVE', htmlspecialchars($img)));
+                            }
+                        }
+                    }
                 }
-            }
 
-            if ($v['stock'] !== '') {
-                $item->appendChild($xml->createElement('STOCK_QUANTITY', sprintf('%s', $v["stock"])));
-            }
-
-            if ( ! $this->is_product_type($v['type'], 'variation') ) {
-                $productNo = $xml->createElement('PRODUCTNO');
-                $productNo->appendChild($xml->createCDATASection($v['sku']));
-                $item->appendChild($productNo);
-
-                $description = $xml->createElement('DESCRIPTION');
-                $description->appendChild($xml->createCDATASection($v['description']));
-                $item->appendChild($description);
-
-                $categories = $this->findCategory($v['category_ids']);
-                $category = $xml->createElement('CATEGORY');
-                $category->appendChild($xml->createCDATASection( apply_filters( 'mergado_xml_product_categories', $categories, $v['id'] ) ) );
-                $item->appendChild($category);
-
-                $shortDescription = $xml->createElement('DESCRIPTION_SHORT');
-                $shortDescription->appendChild($xml->createCDATASection($v['short_description']));
-                $item->appendChild($shortDescription);
-
-                // SET EAN IF EXIST AND SELECTED PLUGIN ACTIVE
-                $eanCode = $eanClass->getEan($v, false,'simple');
-
-                if ($eanCode && $eanCode !== '') {
-                    $ean = $xml->createElement('EAN', $eanCode);
-                    $item->appendChild($ean);
+                // If not has main image then add placeholder
+                if (!$hasMainImage) {
+                    $item->appendChild($xml->createElement('IMAGE', htmlspecialchars(wc_placeholder_img_src('woocommerce_single'))));
                 }
-            } else {
-                $parentId = wc_get_product($v['id'])->get_parent_id();
+
+                if ($params !== null) {
+                    foreach ($params as $paramKey => $paramValue) {
+                        $xmlParam = $xml->createElement('PARAM');
+
+                        $paramName = $xml->createElement('NAME');
+                        $paramName->appendChild($xml->createCDATASection($paramValue['name']));
+                        $xmlParam->appendChild($paramName);
+
+                        $paramNameValue = $xml->createElement('VALUE');
+                        $paramNameValue->appendChild($xml->createCDATASection($paramValue['value']));
+                        $xmlParam->appendChild($paramNameValue);
+
+                        $item->appendChild($xmlParam);
+                    }
+                }
+
+                if ($v['stock'] !== '') {
+                    $item->appendChild($xml->createElement('STOCK_QUANTITY', sprintf('%s', $v["stock"])));
+                }
+
+                if ($this->is_product_type($v['type'], 'simple')) {
+                    $productNo = $xml->createElement('PRODUCTNO');
+                    $productNo->appendChild($xml->createCDATASection($v['sku']));
+                    $item->appendChild($productNo);
+
+                    $description = $xml->createElement('DESCRIPTION');
+                    $description->appendChild($xml->createCDATASection($v['description']));
+                    $item->appendChild($description);
+
+                    $categories = $this->findCategory($v['category_ids']);
+                    $category = $xml->createElement('CATEGORY');
+                    $category->appendChild($xml->createCDATASection($categories));
+                    $item->appendChild($category);
+
+                    $shortDescription = $xml->createElement('DESCRIPTION_SHORT');
+                    $shortDescription->appendChild($xml->createCDATASection($v['short_description']));
+                    $item->appendChild($shortDescription);
+
+                    // SET EAN IF EXIST AND SELECTED PLUGIN ACTIVE
+                    $eanCode = $eanClass->getEan($v, false,'simple');
+
+                    if ($eanCode && $eanCode !== '') {
+                        $ean = $xml->createElement('EAN', $eanCode);
+                        $item->appendChild($ean);
+                    }
+
+
+                    if ($v["length"] != 0 && $v["width"] != 0 && $v["height"] != 0) {
+                        $item->appendChild($xml->createElement('SHIPPING_SIZE', sprintf('%s x %s x %s %s', $v["length"], $v["width"], $v["height"], $sizeUnit)));
+                    }
+
+                    if ($v["weight"] != 0) {
+                        $item->appendChild($xml->createElement('SHIPPING_WEIGHT', sprintf('%s %s', $v["weight"], $weightUnit)));
+                    }
+                } elseif ($this->is_product_type($v['type'], 'variation')) {
+                    $parentId = wc_get_product($v['id'])->get_parent_id();
 //                    $parentId = wc_get_product_id_by_sku($v['parent_id']);
-                $item->appendChild($xml->createElement('ITEMGROUP_ID', $parentId));
+                    $item->appendChild($xml->createElement('ITEMGROUP_ID', $parentId));
 
-                $productNo = $xml->createElement('PRODUCTNO');
-                $productNo->appendChild($xml->createCDATASection(($v['sku'] != '') ? $v['sku'] : (isset($vParent['sku']) ? $vParent['sku'] : '')));
-                $item->appendChild($productNo);
+                    $productNo = $xml->createElement('PRODUCTNO');
+                    $productNo->appendChild($xml->createCDATASection(($v['sku'] != '') ? $v['sku'] : (isset($products[$parentId]['sku']) ? $products[$parentId]['sku'] : '')));
+                    $item->appendChild($productNo);
 
-                if ($parentId) {
-                    $categories = $this->findCategory($vParent['category_ids']);
-                } else {
-                    $categories = '';
+                    if (isset($products[$parentId])) {
+                        $categories = $this->findCategory($products[$parentId]['category_ids']);
+                    } else {
+                        $categories = '';
+                    }
+
+                    $category = $xml->createElement('CATEGORY');
+                    $category->appendChild($xml->createCDATASection($categories));
+                    $item->appendChild($category);
+
+                    // Short description
+                    $shortDescription = $xml->createElement('DESCRIPTION_SHORT');
+
+                    if (isset($products[$parentId])) {
+                        $shortDescription->appendChild($xml->createCDATASection($products[$parentId]['short_description']));
+                    } else {
+                        $shortDescription->appendChild($xml->createCDATASection(''));
+                    }
+
+                    $item->appendChild($shortDescription);
+
+                    // Description
+                    $description = $xml->createElement('DESCRIPTION');
+                    $description->appendChild($xml->createCDATASection(sprintf('%s %s', isset($products[$parentId]['description']) ? $products[$parentId]['description'] : '', $v['description'])));
+
+                    $item->appendChild($description);
+
+                    // Variant description
+                    $variantDescription = $xml->createElement('VARIANT_DESCRIPTION');
+                    $variantDescription->appendChild($xml->createCDATASection($v['description']));
+
+                    $item->appendChild($variantDescription);
+
+                    // SET EAN IF EXIST AND SELECTED PLUGIN ACTIVE
+                    $eanCode = $eanClass->getEan($v, $parentId, 'variation');
+
+                    if ($eanCode && $eanCode !== '') {
+                        $ean = $xml->createElement('EAN', $eanCode);
+                        $item->appendChild($ean);
+                    }
+
+                    $parent = array_key_exists($parentId, $products) ? $products[$parentId] : null;
+
+                    // Variant administration in woocomerce showing MAIN PRODUCT attributes as placeholder ..
+                    // so assume that customer will fill only the one he wants to change
+
+                    $length = "";
+                    $width = "";
+                    $height = "";
+
+                    foreach (['length', 'width', 'height'] as $i) {
+                        if ($v["$i"] != "") {
+                            $$i = $v["$i"];
+                        } elseif (!is_null($parent) && array_key_exists($i, $parent) && $parent["$i"] != "") {
+                            $$i = $parent["$i"];
+                        }
+                    }
+
+                    if ($length != "" && $width != "" && $height != "") {
+                        $item->appendChild($xml->createElement('SHIPPING_SIZE', sprintf('%s x %s x %s %s', $length, $width, $height, $sizeUnit)));
+                    }
+
+                    if ($v["weight"] != "") {
+                        $item->appendChild($xml->createElement('SHIPPING_WEIGHT', sprintf('%s %s', $v["weight"], $weightUnit)));
+                    } else if (!is_null($parent) && array_key_exists("weight", $parent) && $parent["weight"] != "") {
+                        $item->appendChild($xml->createElement('SHIPPING_WEIGHT', sprintf('%s %s', $parent["weight"], $weightUnit)));
+                    }
                 }
-
-                $category = $xml->createElement('CATEGORY');
-                $category->appendChild( $xml->createCDATASection( apply_filters( 'mergado_xml_product_categories', $categories, $vParent['id'] ) ) );
-                $item->appendChild($category);
-
-                // Short description
-                $shortDescription = $xml->createElement('DESCRIPTION_SHORT');
-
-                if ($parentId) {
-                    $shortDescription->appendChild($xml->createCDATASection($vParent['short_description']));
-                } else {
-                    $shortDescription->appendChild($xml->createCDATASection(''));
-                }
-
-                $item->appendChild($shortDescription);
-
-                // Description
-                $description = $xml->createElement('DESCRIPTION');
-                $description->appendChild($xml->createCDATASection(sprintf('%s %s', isset($vParent['description']) ? $vParent['description'] : '', $v['description'])));
-
-                $item->appendChild($description);
-
-                // Variant description
-                $variantDescription = $xml->createElement('VARIANT_DESCRIPTION');
-                $variantDescription->appendChild($xml->createCDATASection($v['description']));
-
-                $item->appendChild($variantDescription);
-
-                // SET EAN IF EXIST AND SELECTED PLUGIN ACTIVE
-                $eanCode = $eanClass->getEan($v, $parentId, 'variation');
-
-                if ($eanCode && $eanCode !== '') {
-                    $ean = $xml->createElement('EAN', $eanCode);
-                    $item->appendChild($ean);
-                }
-
-                $parent = array_key_exists($parentId, $products) ? $vParent : null;
-
-                // Variant administration in woocomerce showing MAIN PRODUCT attributes as placeholder ..
-                // so assume that customer will fill only the one he wants to change
+                $channel->appendChild($item);
             }
-
-            if ( $productObject->get_length() != 0){
-                $item->appendChild($xml->createElement('SHIPPING_LENGTH', sprintf('%s %s', $productObject->get_length(), $sizeUnit)));
-            }
-
-            if( $productObject->get_width() != 0 ){
-                $item->appendChild($xml->createElement('SHIPPING_WIDTH', sprintf('%s %s', $productObject->get_width(), $sizeUnit)));
-            }
-
-            if( $productObject->get_height() != 0) {
-                $item->appendChild($xml->createElement('SHIPPING_HEIGHT', sprintf('%s %s', $productObject->get_height(), $sizeUnit)));
-            }
-
-            if ( $productObject->get_weight() != 0 ) {
-                $item->appendChild($xml->createElement('SHIPPING_WEIGHT', sprintf('%s %s', $productObject->get_weight(), $weightUnit)));
-            }
-
-            $item = apply_filters( 'mergado_xml_item', $item, $xml, ( $parentId? $vParent : $v ) );
-
-            $channel->appendChild($item);
         }
 
         $xml->appendChild($channel);
@@ -531,14 +531,8 @@ class XMLProductFeed
                     $item['value'] = implode(', ', $attrValue->get_options());
                 }
             } else {
-                $item['name'] = wc_attribute_label($attrName) . " (Variation level)";
-                $term = \get_term_by('slug', $attrValue, $attrName);
-
-                if ( $term ){
-                    $item['value'] = $term->name;
-                }else{
-                    $item['value'] = $attrValue;
-                }
+                $item['name'] = wc_attribute_taxonomy_slug($attrName);
+                $item['value'] = $attrValue;
             }
 
             if ($item['value'] !== '') {
@@ -563,14 +557,8 @@ class XMLProductFeed
                     }
 
                 } else {
-                    $item['name'] = wc_attribute_label($attrName);
-                    $term = \get_term_by('slug', $attrValue, $attrName);
-
-                    if ( $term ){
-                        $item['value'] = $term->name;
-                    }else{
-                        $item['value'] = $attrValue;
-                    }
+                    $item['name'] = wc_attribute_taxonomy_slug($attrName);
+                    $item['value'] = $attrValue;
                 }
 
 
@@ -612,6 +600,23 @@ class XMLProductFeed
         } else {
             return false;
         }
+    }
+
+    public function getProductName($product, $productAttributes) {
+
+        if ($productAttributes && count($productAttributes) >= 3 && $this->is_product_type($product['type'], 'variation')) {
+            $productAttributesWithoutEmptyStrings = array_filter($productAttributes);
+
+            if (count($productAttributesWithoutEmptyStrings) > 0) {
+                $productName = $product['name'] . ' - ' . implode(', ', $productAttributesWithoutEmptyStrings);
+            } else {
+                $productName = $product['name'];
+            }
+        } else {
+            $productName = $product['name'];
+        }
+
+        return $productName;
     }
 
     public function getParentImages($parentId)

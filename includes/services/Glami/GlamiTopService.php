@@ -18,7 +18,7 @@ namespace Mergado\Glami;
 
 use Mergado\Tools\Settings;
 
-class GlamiTopClass
+class GlamiTopService
 {
 	const ACTIVE = 'glami-top-form-active';
 	const SELECTION = 'glami-selection-top';

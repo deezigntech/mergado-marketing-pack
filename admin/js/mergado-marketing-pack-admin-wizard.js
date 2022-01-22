@@ -382,31 +382,33 @@
      window.canGo = false;
 
      $('[data-mmp-tab-button]').on('click', async function (e) {
-       var objKeys = Object.keys(window.mmpWizardData);
+       if (window.mmpWizardData) {
+        var objKeys = Object.keys(window.mmpWizardData);
 
-      if (!window.canGo) {
-       for(var index = 0; index < Object.keys(window.mmpWizardData).length; index++) {
-         var data = Object.values(window.mmpWizardData)[index].frontendData;
+        if (!window.canGo) {
+         for(var index = 0; index < Object.keys(window.mmpWizardData).length; index++) {
+           var data = Object.values(window.mmpWizardData)[index].frontendData;
 
-         // Feed is running and is not finnished
-         if (data.feedRunning && !data.feedFinished) {
-           e.preventDefault();
-           e.stopPropagation();
-           e.stopImmediatePropagation();
+           // Feed is running and is not finnished
+           if (data.feedRunning && !data.feedFinished) {
+             e.preventDefault();
+             e.stopPropagation();
+             e.stopImmediatePropagation();
 
-           var result = await window.mmpWizard.stopProgress(objKeys[index]);
+             var result = await window.mmpWizard.stopProgress(objKeys[index]);
 
-           if(result) {
-             window.canGo = true;
-             $(this).click();
-             window.canGo = false;
-           } else {
-             window.canGo = false;
+             if(result) {
+               window.canGo = true;
+               $(this).click();
+               window.canGo = false;
+             } else {
+               window.canGo = false;
+             }
+             break;
            }
-           break;
          }
+        }
        }
-      }
      });
 
      //Show default warning

@@ -19,7 +19,9 @@ use Exception;
 use Mergado\Tools\Settings;
 use Mergado\Tools\ToolsClass;
 
-class PricemaniaClass
+// TODO: rework to PricemaniaServiceIntegration + logic change
+
+class Pricemania
 {
     /**
      * Endpoint URL.
@@ -152,16 +154,18 @@ id=%ORDER_ID%&email=%EMAIL%%PRODUKTY%';
      */
     public static function sendPricemaniaOverenyObchod($orderId)
     {
-        $active = get_option(Settings::PRICEMANIA['ACTIVE']);
-        $id = get_option(Settings::PRICEMANIA['ID']);
+		$pricemaniaService = new PricemaniaService();
 
-        if ($active == 1 && $id != '') {
+        $active = $pricemaniaService->isActive();
+        $id = $pricemaniaService->getId();
+
+        if ($active) {
             try {
                 $order = wc_get_order($orderId);
                 $email = $order->get_billing_email();
                 $products = $order->get_items();
 
-                $pm = new PricemaniaClass($id);
+                $pm = new Pricemania($id);
 
                 foreach ($products as $product) {
                     $name = $product->get_name();

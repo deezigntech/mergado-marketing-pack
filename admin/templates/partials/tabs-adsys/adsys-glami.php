@@ -1,10 +1,10 @@
 <?php
-use Mergado\Glami\GlamiPixelClass;
-use Mergado\Glami\GlamiTopClass;
+use Mergado\Glami\GlamiPixelService;
+use Mergado\Glami\GlamiTopService;
 use Mergado\Tools\Settings;
 
-$glamiPixelClass = new GlamiPixelClass();
-$glamiTopClass = new GlamiTopClass();
+$glamiPixelClass = new GlamiPixelService();
+$glamiTopClass = new GlamiTopService();
 ?>
 
 
@@ -32,9 +32,9 @@ $glamiTopClass = new GlamiTopClass();
             </td>
         </tr>
 
-        <?php foreach (GlamiPixelClass::LANGUAGES as $key => $lang):
-            $codeName = GlamiPixelClass::getCodeName($lang);
-            $activeLangName = GlamiPixelClass::getActiveLangName($lang);
+        <?php foreach (GlamiPixelService::LANGUAGES as $key => $lang):
+            $codeName = GlamiPixelService::getCodeName($lang);
+            $activeLangName = GlamiPixelService::getActiveLangName($lang);
         ?>
             <tr>
                 <th>
@@ -86,22 +86,23 @@ $glamiTopClass = new GlamiTopClass();
 
             <tr>
                 <th>
-                    <label for="<?= GlamiTopClass::SELECTION?>"><?php _e('Glami website', 'mergado-marketing-pack');?></label>
+                    <label for="<?= GlamiTopService::SELECTION?>"><?php _e('Glami website', 'mergado-marketing-pack');?></label>
                 </th>
                 <td>
-                    <select name="<?= GlamiTopClass::SELECTION ?>" id="<?= GlamiTopClass::SELECTION ?>"
+                    <select name="<?= GlamiTopService::SELECTION ?>" id="<?= GlamiTopService::SELECTION ?>"
                             data-mmp-check-field="glami-top">
-                    <?php foreach (GlamiTopClass::LANGUAGES as $key => $data): ?>
-                        <option <?php if ($glamiTopClass->getSelection()['id_option'] == $data['id_option']){ ?>selected="selected"<?php } ?> value="<?= $data['id_option'] ?>"><?= $data['name'] ?></option>
+
+                    <?php foreach (GlamiTopService::LANGUAGES as $key => $data): ?>
+                        <option <?php if ($glamiTopClass->getSelection() && $glamiTopClass->getSelection()['id_option'] == $data['id_option']){ ?>selected="selected"<?php } ?> value="<?= $data['id_option'] ?>"><?= $data['name'] ?></option>
                     <?php endforeach ?>
                     </select>
                 </td>
             </tr>
             <tr>
                 <th>
-                    <label for="<?= GlamiTopClass::CODE?>"><?php _e('Glami TOP code', 'mergado-marketing-pack'); ?></label></th>
+                    <label for="<?= GlamiTopService::CODE?>"><?php _e('Glami TOP code', 'mergado-marketing-pack'); ?></label></th>
                 <td>
-                    <input type="text" id="<?= GlamiTopClass::CODE ?>" name="<?= GlamiTopClass::CODE ?>"
+                    <input type="text" id="<?= GlamiTopService::CODE ?>" name="<?= GlamiTopService::CODE ?>"
                            data-mmp-check-field="glami-top"
                            placeholder="<?php _e('Insert code here', 'mergado-marketing-pack') ?>"
                            value="<?= $glamiTopClass->getCode() ?>">

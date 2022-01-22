@@ -2278,3 +2278,11 @@ body[class*="mergado_page_mergado"] .mmp_settingsBox table th label {
 .mmp_advancedSettingsBox.active .mmp_advancedSettingsBox__content {
     display: block;
 }
+
+.mmp_cookiepage strong {
+    font-weight: 700;
+}
+
+#wpfooter {
+    display: none;
+}

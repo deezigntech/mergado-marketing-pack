@@ -1,7 +1,7 @@
 <?php
     use Mergado\Tools\Settings;
-    use Mergado\Zbozi\ZboziClass;
-    $ZboziClass = new ZboziClass();
+    use Mergado\Zbozi\ZboziService;
+    $ZboziClass = new ZboziService();
 ?>
 
 <div class="card full">
@@ -133,18 +133,18 @@
             <th><strong><?= _e('Edit consent to the questionnaire', 'mergado-marketing-pack') ?></strong></th>
             <td>
                 <small class="badge badge_question">
-                    <?= _e('Here you can edit the sentence of the consent to the sending of the questionnaire, displayed on the checkout page. This is an opt-in consent, ie the customer must agree to participate in the programHere you can edit the text of the sentence of consent to the sending of the questionnaire, displayed in the checkout page. This is an opt-out consent, ie the customer must confirm that he does not want to be involved in the program.', 'mergado-marketing-pack') ?></small>
+                    <?= _e('Here you can edit the text of the sentence of consent to the sending of the questionnaire, displayed in the checkout page. This is an opt-out consent, ie the customer must confirm that he does not want to be involved in the program.', 'mergado-marketing-pack') ?></small>
             </td>
         </tr>
 
         <tr>
             <th>
-                <label for="<?= ZboziClass::OPT_IN . 'en_US' ?>"><?php _e('en_US', 'mergado-marketing-pack') ?></label>
+                <label for="<?= ZboziService::OPT_IN . 'en_US' ?>"><?php _e('en_US', 'mergado-marketing-pack') ?></label>
             </th>
 
             <?php
             $enUsValue = stripslashes($ZboziClass->getOptOut('en_US'));
-            $defaultValue = Mergado\Zbozi\ZboziClass::DEFAULT_OPT;
+            $defaultValue = Mergado\Zbozi\ZboziService::DEFAULT_OPT;
 
 
             if (trim($enUsValue) == '') {
@@ -154,8 +154,8 @@
 
             <td colspan="2">
                 <textarea
-                        id="<?= ZboziClass::OPT_IN . 'en_US' ?>"
-                        name="<?= ZboziClass::OPT_IN . 'en_US' ?>"
+                        id="<?= ZboziService::OPT_IN . 'en_US' ?>"
+                        name="<?= ZboziService::OPT_IN . 'en_US' ?>"
                         placeholder="<?php _e('Insert your text for this language', 'mergado-marketing-pack') ?>"
                         data-mmp-check-field="zbozi-active"
                 ><?= $enUsValue ?></textarea>
@@ -166,12 +166,12 @@
         <?php foreach(get_available_languages() as $lang): ?>
             <tr>
                 <th>
-                    <label for="<?= ZboziClass::OPT_IN . $lang ?>"><?php _e($lang, 'mergado-marketing-pack') ?></label>
+                    <label for="<?= ZboziService::OPT_IN . $lang ?>"><?php _e($lang, 'mergado-marketing-pack') ?></label>
                 </th>
                 <td colspan="2">
                     <textarea
-                            id="<?= ZboziClass::OPT_IN . $lang ?>"
-                            name="<?= ZboziClass::OPT_IN . $lang ?>"
+                            id="<?= ZboziService::OPT_IN . $lang ?>"
+                            name="<?= ZboziService::OPT_IN . $lang ?>"
                             placeholder="<?php _e('Insert your text for this language', 'mergado-marketing-pack') ?>"
                             data-mmp-check-field="zbozi-active"
                     ><?= stripslashes($ZboziClass->getOptOut($lang)) ?></textarea>

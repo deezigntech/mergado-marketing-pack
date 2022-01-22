@@ -19,7 +19,9 @@ namespace Mergado\NajNakup;
 use Exception;
 use Mergado\Tools\Settings;
 
-class NajNakupClass
+// TODO: rework to NajNakupServiceIntegration + logic change
+
+class NajNakup
 {
     /**
      * Products
@@ -109,12 +111,14 @@ class NajNakupClass
      */
     public static function sendNajnakupValuation($orderId)
     {
-        $active = get_option(Settings::NAJNAKUP['ACTIVE']);
-        $code = get_option(Settings::NAJNAKUP['ID']);
+		$najNakupService = new NajNakupService();
 
-        if ($active == 1 && $code != '') {
+        $active = $najNakupService->isActive();
+        $code = $najNakupService->getId();
+
+        if ($active) {
             try {
-                $najNakup = new NajNakupClass();
+                $najNakup = new NajNakup();
 
                 $order = wc_get_order($orderId);
                 $email = $order->get_billing_email();

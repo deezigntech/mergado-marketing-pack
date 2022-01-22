@@ -1,16 +1,21 @@
 <?php
 
-use Mergado\Arukereso\ArukeresoClass;
-use Mergado\Facebook\FacebookClass;
-use Mergado\Glami\GlamiPixelClass;
-use Mergado\Glami\GlamiTopClass;
-use Mergado\Google\GaRefundClass;
-use Mergado\Google\GoogleAdsClass;
-use Mergado\Google\GoogleReviewsClass;
-use Mergado\Google\GoogleTagManagerClass;
+use Mergado\Arukereso\ArukeresoService;
+use Mergado\Etarget\EtargetService;
+use Mergado\Facebook\FacebookService;
+use Mergado\Glami\GlamiPixelService;
+use Mergado\Glami\GlamiTopService;
+use Mergado\Google\GoogleAnalyticsRefundService;
+use Mergado\Google\GoogleAdsService;
+use Mergado\Google\GoogleReviewsService;
+use Mergado\Google\GoogleTagManagerService;
+use Mergado\Kelkoo\KelkooService;
+use Mergado\NajNakup\NajNakupService;
+use Mergado\Pricemania\PricemaniaService;
 use Mergado\Tools\BannersClass;
+use Mergado\Tools\CookieClass;
 use Mergado\Tools\Settings;
-use Mergado\Zbozi\ZboziClass;
+use Mergado\Zbozi\ZboziService;
 
 include_once __MERGADO_DIR__ . 'autoload.php';
 
@@ -23,7 +28,7 @@ if (isset($_POST["submit-save"])) {
     /**
      * Glami PiXel settings
      */
-    GlamiPixelClass::saveFields($_POST);
+    GlamiPixelService::saveFields($_POST);
 
     /**
      * Biano settings
@@ -47,13 +52,13 @@ if (isset($_POST["submit-save"])) {
     /**
      * Glami TOP settings
      */
-    GlamiTopClass::saveFields($_POST);
+    GlamiTopService::saveFields($_POST);
 
 
     /**
      * Facebook settings
      */
-    FacebookClass::saveFields($_POST);
+    FacebookService::saveFields($_POST);
 
 
     /**
@@ -73,7 +78,7 @@ if (isset($_POST["submit-save"])) {
      * Adwords settings
      */
 
-    GoogleAdsClass::saveFields($_POST);
+    GoogleAdsService::saveFields($_POST);
 
 
     /**
@@ -92,70 +97,48 @@ if (isset($_POST["submit-save"])) {
 	/**
 	 * GaRefund settings
 	 */
-	GaRefundClass::saveFields($_POST);
+	GoogleAnalyticsRefundService::saveFields($_POST);
 
     /**
      * Google reviews settings
      */
-    GoogleReviewsClass::saveFields($_POST);
+    GoogleReviewsService::saveFields($_POST);
 
     /**
      * Árukereső
      */
-    ArukeresoClass::saveFields($_POST);
+    ArukeresoService::saveFields($_POST);
 
     /**
      * Google analytics (Google Tag Manager) settings
      */
-    GoogleTagManagerClass::saveFields($_POST);
+    GoogleTagManagerService::saveFields($_POST);
 
     /**
      * ETARGET settings
      */
-    Settings::saveOptions($_POST, [
-        Settings::ETARGET['ACTIVE'],
-    ], [
-        Settings::ETARGET['HASH'],
-        Settings::ETARGET['ID'],
-    ]);
-
+    EtargetService::saveFields($_POST);
 
     /**
      * NajNakup settings
      */
-    Settings::saveOptions($_POST, [
-        Settings::NAJNAKUP['ACTIVE'],
-    ], [
-        Settings::NAJNAKUP['ID'],
-    ]);
-
+    NajNakupService::saveFields($_POST);
 
     /**
      * Pricemania settings
      */
-    Settings::saveOptions($_POST, [
-        Settings::PRICEMANIA['ACTIVE'],
-    ], [
-        Settings::PRICEMANIA['ID'],
-    ]);
-
+    PricemaniaService::saveFields($_POST);
 
     /**
      * Zbozi settings
      */
-    ZboziClass::saveFields($_POST);
+    ZboziService::saveFields($_POST);
 
 
     /**
      * Kelkoo settings
      */
-    Settings::saveOptions($_POST, [
-        Settings::KELKOO['ACTIVE'],
-	    Settings::KELKOO['CONVERSION_VAT_INCL'],
-    ], [
-        Settings::KELKOO['COUNTRY'],
-        Settings::KELKOO['COM_ID'],
-    ]);
+    KelkooService::saveFields($_POST);
 
 
     /**
@@ -199,10 +182,13 @@ if (isset($_POST["submit-save"])) {
     $OptOutTexts[] = 'heureka-verify-opt-out-text-en_US';
 
     Settings::saveOptions($_POST, [], $OptOutTexts);
+
+    CookieClass::saveFields($_POST);
 }
 
 $tabsSettings = [
     'tabs' => [
+        'cookies' => ['title' => '', 'icon' => 'mmp_icons.svg#cookies'],
         'google' => ['title' => 'Google', 'active' => true],
         'facebook' => ['title' => 'Facebook'],
         'heureka' => ['title' => 'Heureka'],

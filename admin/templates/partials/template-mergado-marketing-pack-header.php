@@ -22,15 +22,16 @@ if(!$firstRatingTime) {
 
 // Menu definition
 $menuItemsLeft = [
-    'feeds-product' => ['text' => 'Product feeds', 'icon' => 'product'],
-    'feeds-other' => ['text' => 'Other feeds', 'icon' => 'other_feeds'],
-    'adsys' => ['text' => 'Ad Systems', 'icon' => 'elements'],
+    'feeds-product' => ['text' => 'Product feeds', 'icon' => 'product', 'file' => 'icons.svg'],
+    'feeds-other' => ['text' => 'Other feeds', 'icon' => 'other_feeds', 'file' => 'icons.svg'],
+    'adsys' => ['text' => 'Ad Systems', 'icon' => 'elements', 'file' => 'icons.svg'],
 ];
 
 $menuItemsRight = [
-    'news' => ['text' => 'News', 'icon' => 'notification'],
-    'support' => ['text' => 'Support', 'icon' => 'help'],
-    'licence' => ['text' => 'Licence', 'icon' => 'info'],
+    'cookies' => ['text' => 'Cookies', 'icon' => 'cookies', 'file' => 'mmp_icons.svg', 'param' => 'mmp-tab=cookies'],
+    'news' => ['text' => 'News', 'icon' => 'notification', 'file' => 'icons.svg'],
+    'support' => ['text' => 'Support', 'icon' => 'help', 'file' => 'icons.svg'],
+    'licence' => ['text' => 'Licence', 'icon' => 'info', 'file' => 'icons.svg'],
 ];
 ?>
 
@@ -59,7 +60,7 @@ $menuItemsRight = [
                 <?php
                     foreach($menuItemsLeft as $key => $item):
                         if(('mergado-' . $key) == $_GET['page']): ?>
-                            <li><a href="/wp-admin/admin.php?page=mergado-<?= $key ?>" class="active">
+                            <li><a href="/wp-admin/admin.php?page=mergado-<?= $key ?><?= isset($item['param']) ? '&' . $item['param'] : '' ?>" class="active">
                                     <?php
                                         if($item['icon'] === 'other_feeds'):
                                     ?>
@@ -73,7 +74,7 @@ $menuItemsRight = [
                                         else:
                                     ?>
                                             <svg class="iconsMenu">
-                                                <use xlink:href="<?= plugin_dir_url(__MERGADO_ADMIN_IMAGES_DIR__ . 'icons.svg') . 'icons.svg#' . $item['icon'] ?>"></use>
+                                                <use xlink:href="<?= plugin_dir_url(__MERGADO_ADMIN_IMAGES_DIR__ . 'icons.svg') . $item['file'] . '#' . $item['icon'] ?>"></use>
                                             </svg>
                                     <?php
                                         endif;
@@ -83,7 +84,7 @@ $menuItemsRight = [
                                 </a></li>
                         <?php else: ?>
                             <li>
-                                <a href="/wp-admin/admin.php?page=mergado-<?= $key ?>">
+                                <a href="/wp-admin/admin.php?page=mergado-<?= $key ?><?= isset($item['param']) ? '&' . $item['param'] : '' ?>">
                                     <?php
                                     if($item['icon'] === 'other_feeds'):
                                         ?>
@@ -97,7 +98,7 @@ $menuItemsRight = [
                                     else:
                                         ?>
                                         <svg class="iconsMenu">
-                                            <use xlink:href="<?= plugin_dir_url(__MERGADO_ADMIN_IMAGES_DIR__ . 'icons.svg') . 'icons.svg#' . $item['icon'] ?>"></use>
+                                            <use xlink:href="<?= plugin_dir_url(__MERGADO_ADMIN_IMAGES_DIR__ . 'icons.svg') . $item['file'] . '#' . $item['icon'] ?>"></use>
                                         </svg>
                                     <?php
                                     endif;
@@ -113,16 +114,16 @@ $menuItemsRight = [
                 <?php
                     foreach($menuItemsRight as $key => $item):
                         if(('mergado-' . $key) == $_GET['page']): ?>
-                            <li><a href="/wp-admin/admin.php?page=mergado-<?= $key ?>" class="active">
+                            <li><a href="/wp-admin/admin.php?page=mergado-<?= $key ?><?= isset($item['param']) ? '&' . $item['param'] : '' ?>" class="active">
                                     <svg class="iconsMenu">
-                                        <use xlink:href="<?= plugin_dir_url(__MERGADO_ADMIN_IMAGES_DIR__ . 'icons.svg') . 'icons.svg#' . $item['icon'] ?>"></use>
+                                        <use xlink:href="<?= plugin_dir_url(__MERGADO_ADMIN_IMAGES_DIR__ . 'icons.svg') . $item['file'] . '#' . $item['icon'] ?>"></use>
                                     </svg>
                                     <?= __( $item["text"], 'mergado-marketing-pack') ?></a></li>
                         <?php else: ?>
                             <li>
-                                <a href="/wp-admin/admin.php?page=mergado-<?= $key ?>">
+                                <a href="/wp-admin/admin.php?page=mergado-<?= $key ?><?= isset($item['param']) ? '&' . $item['param'] : '' ?>">
                                     <svg class="iconsMenu">
-                                        <use xlink:href="<?= plugin_dir_url(__MERGADO_ADMIN_IMAGES_DIR__ . 'icons.svg') . 'icons.svg#' . $item['icon'] ?>"></use>
+                                        <use xlink:href="<?= plugin_dir_url(__MERGADO_ADMIN_IMAGES_DIR__ . 'icons.svg') . $item['file'] . '#' . $item['icon'] ?>"></use>
                                     </svg>
                                     <?= __( $item['text'], 'mergado-marketing-pack') ?></a></li>
                         <?php
